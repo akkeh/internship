@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import essentia
 import essentia.standard as ess
 
-
 def freq_to_MIDInote(f, f_ref=440.):
     return int(np.log2(f / float(f_ref)) * 12 + 49)
 

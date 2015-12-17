@@ -1,4 +1,9 @@
 #! /usr/bin/python2
+'''
+todo: download discriptors, tags, fields, etc. for each file
+
+'''
+
 import sys, os
 
 ARGCOUNT = 4    # .json file, tokenfile, fieldsfile, descriptorsfile
