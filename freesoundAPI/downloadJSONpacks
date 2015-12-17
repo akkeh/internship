@@ -1,0 +1,8 @@
+#! /bin/bash
+
+DIR="/media/data/studie/mtg/tests/freesoundAPI/"
+
+for pack in pack*.json
+do
+    python2 "${DIR}downloadFreesounds.py" "${pack}" "${DIR}.FreesoundAuthToken.txt" "${DIR}fields.txt" "${DIR}desc.txt"
+done

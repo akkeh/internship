@@ -1,0 +1,1 @@
+descriptors=lowlevel.pitch,lowlevel.pitch_salience

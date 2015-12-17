@@ -1,0 +1,1 @@
+fields=id,name,tags,analysis,previews
