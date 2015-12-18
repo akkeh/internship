@@ -1,5 +1,10 @@
 #! /usr/bin/python2
 ARGCOUNT = 3
+'''
+    todo:
+    -   reference pitch from description
+    -   other packs
+'''
 
 import os, sys
 import json
@@ -66,6 +71,16 @@ def getPitchFromJSON(d):
     salience = d['analysis']['lowlevel']['pitch_salience']
     
     return pitch['mean'], pitch['var'], salience['mean'], salience['var']
+
+def getFref(d):
+    '''
+    FINISH
+    '''
+    desc = d['description']
+    # try to find a statement to a reference pitch:
+    i = desc.find('Hz')
+     
+    return 0
 
 def tag_vs_freesoundAnalysis(jsonFile, pack=""):
     '''
