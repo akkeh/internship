@@ -1,2 +1,8 @@
 *.FreesoundAuthToken*
 *ignore*
+*sounds/*
+
+documents/*.aux
+documents/*.log
+documents/*.odt
+documents/exportProposal

@@ -1,0 +1,19 @@
+#! /bin/bash
+ARGCOUNT=4
+
+if [ $# -lt ${ARGCOUNT} ];
+then
+    echo "usage: testPack [dir][packname][output file][outputs]"
+    exit
+fi
+
+DIR=$1
+PACK=$2
+OUT=$3
+OUTP=$4
+`echo "${OUTP}" > "${OUT}"`
+for jsonFile in ${DIR}/*.json
+do
+    echo "File: ${jsonFile}"
+    python2 test_freesoundPitchAnalysis.py "${jsonFile}" "${PACK}" "${OUT}" "${OUTP}"
+done

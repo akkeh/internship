@@ -1,8 +1,9 @@
 #! /bin/bash
 
-DIR="/media/data/studie/mtg/tests/freesoundAPI/"
-
-for pack in pack*.json
+DIR="/media/data/studie/mtg/src/freesoundAPI/"
+OUTDIR=`pwd`
+OUTDIR="${OUTDIR}/sounds/"
+for pack in ./tmp/pack*.json
 do
-    python2 "${DIR}downloadFreesounds.py" "${pack}" "${DIR}.FreesoundAuthToken.txt" "${DIR}fields.txt" "${DIR}desc.txt"
+    python2 "${DIR}downloadFreesounds.py" "${pack}" "${OUTDIR}" "${DIR}.FreesoundAuthToken.txt" "../fields.txt" "../desc.txt"
 done
