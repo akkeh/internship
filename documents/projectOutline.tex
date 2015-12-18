@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\title{Project Outline}
+\author{Akke Houben}
+\date{15-12-2015}
+
+\begin{document}
+\maketitle
+\section{Goal}
+
+
+The goal of this project is to create a 'melodic software sampler' interface to Freesound. The system will collect, arrange and (when necessary) transform single-note samples from the Freesound-database in order to create a digital instrument which can be played with for instance a MIDI keyboard. At the end of the project the goal is to have a functional web demo application.
+\section{Design}
+In the following section some design considerations will be discussed, a diagram of the system is given in fig.1.
+\subsection{Input}
+    The startingpoint will be a sound from Freesound.
+    \begin{itemize}
+        \item The user will be able to give a search-term (for instance 'piano') and select a sound from the search-results as a starting point or;
+        \item The user will be able to upload a sound to Freesound which he/she wants to have a playable instrument of. 
+    \end{itemize}
+
+\subsection{Output}
+    \begin{itemize}
+        \item The output will consist of a playable collection of sounds from the Freesound database arranged under keyboard keys (MIDI) and which can be played using, for instance, a MIDI keyboard.
+    \end{itemize}
+
+\subsection{Design considerations}
+    \begin{itemize}
+        \item The system will use the sound provided by the user as a startingpoint to search for the other sounds;
+        \item For each pitch the system will use tagging and the 'similar sound'-functionallities already provided by Freesound to collect a batch of candidate sounds; From this batch the most fit candidate will be choosen (here the possibility that the starting sound belongs to a pack will simplify the search considerably).  The system will determine the possibility for the found sounds to form a coherent instrument together (“is it possible that these sounds are form one instrument?”);
+        \item In case some pitches are missing the system will transform (pitch-shift) adjecent sounds to fill 'gaps' in the pitch scale.
+    \end{itemize}
+
+ \begin{figure}
+    \includegraphics{total_sys-1.pdf}
+    \caption{Global design}
+    \label{fig:total}
+\end{figure}
+   
+\section{Objectives}
+    There are three main objectives to this project:
+    \begin{enumerate}
+        \item Batch collection
+        \item Timbre discrimination
+        \item Pitch estimation
+    \end{enumerate}
+    \subsection{Batch collection}
+        Research will be done on how to use the Freesound similar sounds infrastructure and use the API to download sounds, specifically the possibilities to search directly for specific pitches will be assessed.
+        The quality of the collected sounds using this method for the specific task envisioned here will be assessed and when necessary the collection method will be improved.
+    
+    \subsection{Timbre discrimination}
+        There will be research done about instrument discrimination and classification. In particular the difference between sounds belonging to the same type of instrument but produced by different physical instruments and the available bandwidth of sounds which are accepted perceptually to belong to the same physical instrument are points of interest. 
+        A system to determine which of the candidate sounds can be accepted will be designed and implemented.
+ 
+    \subsection{Pitch estimation}
+        Research will be done about available pitch estimation algorithms, a comparison of available algorithms will be made and possible improvements will be discussed.
+        A system will be designed and implemented to determine the pitches of the found sounds and to determine (and when necessary create) the missing sounds.
+        The creation of missing sounds will be done by transforming (pitchshifting) adjecent sounds.
+
+\section{Planning}
+    First the aim will be to research and assess different available pitch estimation algorithms and where possible apply improvements. Having a solid way to determine (estimate) the pitch of the starting sound and the other sounds is fundamental to this system, not only because different pitches are a requirement to a melodic sampler, but also because the first reduction of possible sounds will be based on the pitch of the sounds.  
+    After a solid pitch-estimation is achieved work will focus on the discrimination of the instrument sounds. At this point research will be done to the perceptual bandwith within which different sounds will be percieved as a single instruments and a system will be designed and implemented to determine whether a sound fits within this bandwidth or not.
+    Enclosed is a schedule with a week by week planning and proposed deadlines for the sub-tasks involved with this project.
+   
+\end{document}
