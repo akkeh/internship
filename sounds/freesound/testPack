@@ -1,19 +1,30 @@
 #! /bin/bash
-ARGCOUNT=4
+ARGCOUNT=3
 
 if [ $# -lt ${ARGCOUNT} ];
 then
-    echo "usage: testPack [dir][packname][output file][outputs]"
+    echo "usage: testPack [dir][packname][output file]([big err print th])"
     exit
 fi
 
 DIR=$1
 PACK=$2
 OUT=$3
-OUTP=$4
+OUTP=`cat outputs`
+errTH=""
+if [ $# -gt `echo "${ARGCOUNT}" | bc` ];
+then
+    echo "with: ${4}"
+    errTH=$4
+fi
 `echo "${OUTP}" > "${OUT}"`
 for jsonFile in ${DIR}/*.json
 do
     echo "File: ${jsonFile}"
-    python2 test_freesoundPitchAnalysis.py "${jsonFile}" "${PACK}" "${OUT}" "${OUTP}"
+    if [ "${errTH}" == "" ];
+    then
+        python2 freesoundPitchAnalysis.py "${jsonFile}" "${PACK}" "${OUT}" "${OUTP}"
+    else
+        python2 freesoundPitchAnalysis.py "${jsonFile}" "${PACK}" "${OUT}" "${OUTP}" "${errTH}"
+    fi
 done
