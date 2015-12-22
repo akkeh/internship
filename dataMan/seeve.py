@@ -15,17 +15,23 @@ def seeveData(dataFile, dat):
         row = 0 
         while str(labels[row]) != str(dat) and row < len(labels):
             row += 1
-        print row
         if row == len(labels):
             print "data not found!"
         else:
             line = d.readline()
             while line != '':
-                print line
                 datapoint = line.split('\n')[0].split('\t')[row]
-                y = np.append(y, datapoint)
+                if str(dat) == 'name':
+                    y = np.append(y, datapoint)
+                else:
+                    y = np.append(y, float(datapoint))
                 line = d.readline()
     return y 
 
 
-
+def plot2d(dataFile, desc_x, desc_y):
+    x = seeveData(dataFile, desc_x)
+    y = seeveData(dataFile, desc_y)
+   
+    plt.plot(x, y)
+    return x, y 

@@ -1,6 +1,5 @@
 #! /usr/bin/python2
 '''
-todo: download discriptors, tags, fields, etc. for each file
 
 '''
 
@@ -10,29 +9,29 @@ ARGCOUNT = 5    # .json file, outdir, tokenfile, fieldsfile, descriptorsfile
 hq = False
 
 argv = sys.argv
-
-# read token:
-tokenfile=open(argv[3])
-token = tokenfile.read()
-print "Token: "+token
-token = token[:len(token)-1]    # get rid of \n
-
-# read fields:
-fieldsfile = open(argv[4])
-fields=fieldsfile.read()
-print "fields="+fields
-fields = "fields="+fields[:len(fields)-1]
-
-# read descriptors:
-descfile = open(argv[5])
-desc=descfile.read()
-print "descriptors="+desc
-desc = "descriptors="+desc[:len(desc)-1]
-
-
 if len(argv) < ARGCOUNT+1:
-    print "usage: downloadFreesounds [*.json][output dir]"
+    print "usage: downloadFreesounds [*.json][output dir][tokenfile][fieldsfile][descriptorfile]"
 else:
+
+    # read token:
+    tokenfile=open(argv[3])
+    token = tokenfile.read()
+    print "Token: "+token
+    token = token[:len(token)-1]    # get rid of \n
+
+    # read fields:
+    fieldsfile = open(argv[4])
+    fields=fieldsfile.read()
+    print "fields="+fields
+    fields = "fields="+fields[:len(fields)-1]
+
+    # read descriptors:
+    descfile = open(argv[5])
+    desc=descfile.read()
+    print "descriptors="+desc
+    desc = "descriptors="+desc[:len(desc)-1]
+
+
     inputFile = argv[1]
     outdir = argv[2]+inputFile.split('/')[-1].split('.')[0]
     os.system('mkdir '+outdir)

@@ -44,7 +44,7 @@ def getNoteFromJSON(d, pack=''):
         note = d['name'].split(" ")[1]
         if len(note) == 1:
             note = note+d['name'].split(" ")[2]
-        if len(note) > 4 or len(note) < 2:   # notename not in filename!
+        if len(note) > 4:   # notename not in filename!
             return -1
         elif note.find("-") != -1:
             nn = note.split("-")[0]
