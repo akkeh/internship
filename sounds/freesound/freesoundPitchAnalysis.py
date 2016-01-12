@@ -166,4 +166,3 @@ else:
             for out in outp:
                 outfile.write(str(res[str_to_out(out)])+"\t")
             outfile.write("\n")
-

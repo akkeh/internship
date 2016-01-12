@@ -3,4 +3,6 @@ Pitch Estimation:
     -   where and why does it fail?? (confidence/ salience factors??)
 -   assesment of essentia pitchYinFFT on downloaded sounds (freesoundand and IOWA and philharmonic)
     -   where and why does it fail??
--   improvements of usage of pitchYinFFT? 
+-   improvements:   
+    -   improvements of usage of pitchYinFFT?  
+    -   improve pitchYinFFT?

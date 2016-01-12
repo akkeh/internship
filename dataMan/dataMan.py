@@ -30,9 +30,14 @@ def manData(d):
     pTag = sv.seeveData(d, 'pTag')
     pEst = sv.seeveData(d, 'pEst')
         
+    # x: confidence; y: absErr
+    conf = sv.seeveData(d, 'confidence')
+    absErr = sv.seeveData(d, 'absErr')
     # x: salience; y: absErr:
     sal = sv.seeveData(d, 'salience')
-    absErr = sv.seeveData(d, 'absErr')
+    if len(sal) == 0 and len(conf) > 0:
+        plots[2] = 'confidence_absErr'
+        
     
     # ERB dist histogram
     ERBdist = ERB.calcERBdist(pTag, pEst)
@@ -54,12 +59,15 @@ def manData(d):
                 plt.plot(errHist_x, errHist_y)
             elif pltid == 1:
                 plt.plot(pTag, pEst, '.')
-            elif pltid == 2:    
-                plt.plot(sal, absErr, '.')
+            elif pltid == 2:   
+                if plots[2] == 'salience_absErr': 
+                    plt.plot(sal, absErr, '.')
+                elif plots[2] == 'confidence_absErr':
+                    plt.plot(conf, absErr, '.')
             elif pltid == 3:
                 plt.plot(ERBdist_x, ERBdist_y)
         except:
             pltid = -1
 
-    print "outputs: err, pTag, pEst, absErr, sal, ERBdist"
-    return err, pTag, pEst, absErr, sal, ERBdist
+    print "outputs: err, pTag, pEst, absErr, sal, conf, ERBdist"
+    return err, pTag, pEst, absErr, sal, conf, ERBdist
