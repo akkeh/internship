@@ -17,7 +17,7 @@ then
     echo "with: ${4}"
     errTH=$4
 fi
-`echo "${OUTP}" > "${OUT}"`
+`echo "name,err,absErr,midinote,pTag,pEst,pEstVar,salience" > "${OUT}"`
 for jsonFile in ${DIR}/*.json
 do
     echo "File: ${jsonFile}"

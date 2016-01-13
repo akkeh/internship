@@ -1,4 +1,4 @@
-name,err,absErr,midinote,pTag,pEst,pEstVar,salience
+name,err,absErr,midinote,pTag,pEst,confidence
 carlos/Alto-Recorder A-4 Staccato Non-Vibrato .ogg	408.264628513	408.264628513	-1	24.4997147489	432.764343262	0.996422946453	
 carlos/Alto-Recorder A#-4 Staccato Non-Vibrato .ogg	435.875773532	435.875773532	-1	24.4997147489	460.375488281	0.992092072964	
 carlos/Alto-Recorder A -5 Staccato Non-Vibrato .ogg	845.709269626	845.709269626	-1	24.4997147489	870.208984375	0.997673213482	

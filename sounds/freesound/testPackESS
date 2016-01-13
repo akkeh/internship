@@ -18,7 +18,7 @@ then
     echo "with: ${4}"
     outF=$4
 fi
-`echo "${OUTP}" > "${OUT}"`
+`echo "name,err,absErr,midinote,pTag,pEst,confidence" > "${OUT}"`
 
 EXT=".ogg"
 if [ ${PACK} == "IOWA" ];
