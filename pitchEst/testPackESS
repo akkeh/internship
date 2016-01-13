@@ -1,0 +1,42 @@
+#! /bin/bash
+ARGCOUNT=3
+
+if [ $# -lt ${ARGCOUNT} ];
+then
+    echo "usage: testPack [dir][packname][output file]([big err print th])"
+    exit
+fi
+
+DIR=$1
+PACK=$2
+OUT=$3
+rm -i ${OUT}
+OUTP=`cat outputs`
+outF=""
+if [ $# -gt `echo "${ARGCOUNT}" | bc` ];
+then
+    echo "with: ${4}"
+    outF=$4
+fi
+`echo "name,err,absErr,midinote,pTag,pEst,confidence" > "${OUT}"`
+
+EXT=".ogg"
+if [ ${PACK} == "IOWA" ];
+then
+    EXT=".aiff"
+fi
+if [ ${PACK} == "philharmonica" ];
+then
+    EXT=".mp3"
+fi
+
+for file in ${DIR}/*${EXT}
+do
+    echo "File: ${file}"
+    if [ "${errTH}" == "" ];
+    then
+        python2 pitchAnalysis.py "${file}" "${PACK}" "${OUT}"
+    else
+        python2 pitchAnalysis.py "${file}" "${PACK}" "${OUT}"
+    fi
+done
