@@ -5,7 +5,7 @@ import bins
 import ERBdist as ERB
 import seeve as sv
 
-def manData(d):
+def getData(d):
 
     # variables: -------------------------------------------- #
     # errHist:
@@ -38,7 +38,7 @@ def manData(d):
     if len(sal) == 0 and len(conf) > 0:
         plots[2] = 'confidence_absErr'
         
-    
+    name = sv.seeveData(d, 'name')
     # ERB dist histogram
     ERBdist = ERB.calcERBdist(pTag, pEst)
     ERBdist_x, ERBdist_y = bins.binData(ERBdist, ERBdist_bw)
@@ -70,23 +70,24 @@ def manData(d):
         except:
             pltid = -1
         '''
-    print "outputs: err, pTag, pEst, absErr, sal, conf, ERBdist"
-    return ('err', err), ('pTag', pTag), ('pEst', pEst), ('absErr', absErr), ('sal', sal), ('conf', conf), ('ERBdist', ERBdist)
+    #print "outputs: err, pTag, pEst, absErr, sal, conf, ERBdist"
+    return ('name', name), ('err', err), ('pTag', pTag), ('pEst', pEst), ('absErr', absErr), ('sal', sal), ('conf', conf), ('ERBdist', ERBdist)
 
-def get_data(x, fieldname):
+def getField(x, fieldname):
     i = 0
     for field in x:
         #print str(field[0])
         if str(field[0]) == fieldname:
             return field[1]
     return -1
-    
+   
 def mean(x):
     return np.sum(x) / float(len(x))
 
 def stddev(x):
     xdev = x - mean(x)
-    return np.sum(xdev*xdev) / len(x)
+    var = np.sum(xdev*xdev) / len(x)
+    return np.sqrt(var)
 
 #   Mangle analysis results:
 import os
@@ -104,10 +105,10 @@ def meanErrs(directory):
     y = np.ndarray(shape=(N, 3), dtype='S32')
     
     for i in range(N):
-        data = manData(str(directory)+str(files[i]))
-        errs = get_data(data, 'err')
+        data = getData(str(directory)+str(files[i]))
+        errs = get_field(data, 'err')
         y[i] = (files[i], mean(errs), stddev(errs))
-    print "name, mean, standard dev"
+    #print "name, mean, standard dev"
     return y 
 
 def err_vs_pTag(directory):
@@ -115,10 +116,12 @@ def err_vs_pTag(directory):
     N = len(files)
     
     for i in range(N):
-        data = manData(str(directory)+str(files[i]))
-        pTag = get_data(data, 'pTag')
-        err = get_data(data, 'err')
+        data = getData(str(directory)+str(files[i]))
+        pTag = get_field(data, 'pTag')
+        err = get_field(data, 'err')
+        plt.ylabel('pTag')
+        plt.xlabel('err');
+        plt.title(files[i])
         plt.plot(pTag, err, '.')
         plt.show()
-    plt.fig 
-    print "name, pTag, err"
+    #print "name, pTag, err"

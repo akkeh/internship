@@ -10,7 +10,7 @@ def seeveData(dataFile, dat):
     y = np.array([])
     with open(dataFile) as d:
         labels = d.readline().split('\n')[0].split(',')
-        print "labels: ", labels
+        #print "labels: ", labels
         # find row:
         row = 0 
         while  row < len(labels) and str(labels[row]) != str(dat):
