@@ -12,8 +12,9 @@ def zeropad(x, Ny):
     else:
         return x
 
-pYin = esstd.PitchYinFFT()  # pitch extimation algorithm
 def essPitchAnalysis(filename):
+    pYin = esstd.PitchYinFFT()  # pitch estimation algorithm
+    pSal = esstd.PitchSalience()    # pitch salience
     # load audiofile:
     loader = esstd.MonoLoader(filename = filename)
     x = loader();
@@ -27,5 +28,6 @@ def essPitchAnalysis(filename):
 
     # calculate pitch:
     pitch, conf = pYin(X)
+    sal = pSal(X)
+    return pitch, conf, sal
 
-    return pitch, conf

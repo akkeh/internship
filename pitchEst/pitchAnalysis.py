@@ -71,11 +71,11 @@ else:
     pTag = MIDInote_to_freq(nn)
     
     # calculate pitchYinFFT:
-    pEst, conf = essP.essPitchAnalysis(fn)
+    pEst, conf, sal = essP.essPitchAnalysis(fn)
     
     err = pEst - pTag
     absErr = abs(err)
-    res = [ fn, err, absErr, nn, pTag, pEst, conf ]
+    res = [ fn, err, absErr, nn, pTag, pEst, conf, sal ]
 
     # write to file:
     with open(outfile, "a") as of:
