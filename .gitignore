@@ -1,6 +1,9 @@
 *.FreesoundAuthToken*
 *ignore*
 *sounds/*
+*.pyc
+*.swp
+*.pdf
 
 documents/*.aux
 documents/*.log

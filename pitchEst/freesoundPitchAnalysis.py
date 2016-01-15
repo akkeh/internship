@@ -143,7 +143,7 @@ def tag_vs_freesoundAnalysis(jsonFile, pack=""):
 def str_to_out(outp):
     name, err, absErr, midinote, pTag, pEst, pEstVar, salience = np.arange(8)
     return eval(outp)
-
+'''
 if len(sys.argv) < ARGCOUNT + 1:
     print "usage: test_freesoundPitchAnalysis [.json file][pack][printfile][out1,out2,out3]"
 else:
@@ -166,3 +166,4 @@ else:
             for out in outp:
                 outfile.write(str(res[str_to_out(out)])+"\t")
             outfile.write("\n")
+'''

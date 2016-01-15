@@ -4,7 +4,7 @@ import sys, os
 import essPitch as essP
 import freesoundPitchAnalysis as frsndPA
 
-ARGCOUNT = 2
+ARGCOUNT = 3
 
 # MIDI <-> frequency conversion -----------------------
 def freq_to_MIDInote(f, fref=440.):
@@ -52,14 +52,15 @@ def getMIDINoteFromFilename(fn, pack=''):
    
 
 if len(sys.argv) < ARGCOUNT + 1:
-    print "usage: pitchAnalysis.py [filename][pack]([outfile])"
+    print "usage: pitchAnalysis.py [filename][pack][outfile]([WINDOWINGTYPE])"
 else:
     fn = sys.argv[1]
     pack = sys.argv[2]
+    outfile = sys.argv[3]
     if len(sys.argv) > ARGCOUNT + 1:
-        outfile = sys.argv[3]
+        win = sys.argv[4]
     else:
-        outfile = pack+"_results.txt"
+        win = 'none'
 
     print "File: "+fn
     # get notenumber and frequency from filename:
@@ -70,8 +71,8 @@ else:
         nn = getMIDINoteFromFilename(fn, pack)
     pTag = MIDInote_to_freq(nn)
     
-    # calculate pitchYinFFT:
-    pEst, conf, sal = essP.essPitchAnalysis(fn)
+    # calculate pitchYinFFT & pitchSalience:
+    pEst, conf, sal = essP.essPitchAnalysis(fn, win)
     
     err = pEst - pTag
     absErr = abs(err)

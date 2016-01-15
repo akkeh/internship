@@ -40,9 +40,10 @@ def getData(d):
         
     name = sv.seeveData(d, 'name')
     # ERB dist histogram
-    ERBdist = ERB.calcERBdist(pTag, pEst)
+    ERBdist = ERB.errERB(pTag, pEst)
     ERBdist_x, ERBdist_y = bins.binData(ERBdist, ERBdist_bw)
 
+    midi = sv.seeveData(d, 'midinote')
     '''
     pltid = 0
     while pltid != -1:
@@ -71,7 +72,7 @@ def getData(d):
             pltid = -1
         '''
     #print "outputs: err, pTag, pEst, absErr, sal, conf, ERBdist"
-    return ('name', name), ('err', err), ('pTag', pTag), ('pEst', pEst), ('absErr', absErr), ('sal', sal), ('conf', conf), ('ERBdist', ERBdist)
+    return ('name', name), ('err', err), ('pTag', pTag), ('midinote', midi), ('pEst', pEst), ('absErr', absErr), ('sal', sal), ('conf', conf), ('ERBdist', ERBdist)
 
 def getField(x, fieldname):
     i = 0
@@ -89,6 +90,7 @@ def stddev(x):
     var = np.sum(xdev*xdev) / len(x)
     return np.sqrt(var)
 
+'''
 #   Mangle analysis results:
 import os
 def getFiles(directory):
@@ -125,3 +127,5 @@ def err_vs_pTag(directory):
         plt.plot(pTag, err, '.')
         plt.show()
     #print "name, pTag, err"
+
+'''

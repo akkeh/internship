@@ -3,20 +3,21 @@ ARGCOUNT=3
 
 if [ $# -lt ${ARGCOUNT} ];
 then
-    echo "usage: testPack [dir][packname][output file]([big err print th])"
+    echo "usage: testPack [dir][packname][output file]([WINDOW])"
     exit
 fi
 
 DIR=$1
 PACK=$2
 OUT=$3
+
 rm -i ${OUT}
 OUTP=`cat outputs`
-outF=""
+WIN=""
 if [ $# -gt `echo "${ARGCOUNT}" | bc` ];
 then
     echo "with: ${4}"
-    outF=$4
+    WIN=$4
 fi
 `echo "name,err,absErr,midinote,pTag,pEst,confidence,salience" > "${OUT}"`
 
@@ -33,10 +34,5 @@ fi
 for file in ${DIR}/*${EXT}
 do
     echo "File: ${file}"
-    if [ "${errTH}" == "" ];
-    then
-        python2 pitchAnalysis.py "${file}" "${PACK}" "${OUT}"
-    else
-        python2 pitchAnalysis.py "${file}" "${PACK}" "${OUT}"
-    fi
+        python2 pitchAnalysis.py "${file}" "${PACK}" "${OUT}" "${WIN}"
 done

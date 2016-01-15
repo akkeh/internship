@@ -10,7 +10,7 @@ def ERB(fc):
     '''
     return 24.7 + (0.108 * fc)
 
-def calcERBdist(pTag_in, pEst_in):
+def errERB(pTag_in, pEst_in):
     if str(type(pTag_in)).find('array') > -1:
         N = len(pTag_in)
         if N != len(pEst_in):

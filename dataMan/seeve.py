@@ -16,7 +16,7 @@ def seeveData(dataFile, dat):
         while  row < len(labels) and str(labels[row]) != str(dat):
             row += 1
         if row == len(labels):
-            print "data not found!"
+            return y 
         else:
             line = d.readline()
             while line != '':

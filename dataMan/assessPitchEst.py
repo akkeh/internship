@@ -1,7 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import dataMan as dm
- 
+
+def hiErrPitches(fn, th=-999):
+    d = dm.getData(fn)
+    
+    absErr = dm.getField(d, 'absErr')
+    midi = dm.getField(d, 'midinote')
+   
+    if th < 0:
+        th = dm.mean(absErr)
+        print "using mean"
+    i_hiErr = np.where(absErr < th) 
+    
+    return i_hiErr, absErr, midi
 
 def predictEstErr(fn, evaluate='absErr', predict='conf', inverse_eval=False, inverse_predict=False, plot=0):
     data = dm.getData(fn)
