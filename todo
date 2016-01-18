@@ -9,13 +9,16 @@ Pitch Estimation:
         -   Can salience predict the error of the pitch estimate?
         -   salience from python essentia?
     -   Other?
+-   Effects of windowing?
 
 -   statistical analysis of freesound pitch estimates assesment (percentage of succes/failure)
     -   where and why does it fail?? (confidence/ salience factors??)
+        -   pTag, pEst, salience, confidence, etc. of high error sounds
 -   assesment of essentia pitchYinFFT on downloaded sounds (freesoundand and IOWA and philharmonic)
     -   where and why does it fail??
+        -   pTag, pEst, salience, confidence, etc. of high error sounds
+-   Differences between Freesound and essentia??
 -   improvements:   
     -   improvements of usage of pitchYinFFT?  
     -   improve pitchYinFFT?
-
-
+    ->  delve into code of pitchYinFFT

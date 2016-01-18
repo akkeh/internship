@@ -1,3 +1,0 @@
-name,err,absErr,midinote,pTag,pEst,confidence
-../sounds/nonFrsnd/IOWA/piano//Piano.ff.A0.aiff	4.62180709839	4.62180709839	1	27.5	32.1218070984	0.534788250923	
-../sounds/nonFrsnd/IOWA/piano//Piano.ff.A1.aiff	0.797874450684	0.797874450684	13	55.0	55.7978744507	0.655040025711	
