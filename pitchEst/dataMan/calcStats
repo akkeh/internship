@@ -1,0 +1,23 @@
+#! /bin/bash
+ARGCOUNT=2
+
+if [ $# -lt ${ARGCOUNT} ];
+then
+    echo "usage: calcStats [results dir][outputfile]"
+    exit
+fi
+
+DIR=$1
+OUT=$2
+
+rm -i ${OUT}
+OUTP=`cat outputs`
+`echo "${OUTP}" > "${OUT}"`
+
+for file in ${DIR}/*.txt
+do
+    echo "File: ${file}"
+    python2 assessPitchEst.py ${file} ${OUT}
+done
+
+#python2 getStats.py ${OUT}
