@@ -1,0 +1,14 @@
+#! /bin/bash
+
+terms=("uitar" "lucked" "accato")
+N=3
+N=`echo "${N} - 1" | bc`
+
+for i in `seq 0 $N`
+do
+    term=${terms[${i}]}
+    echo "sounds containing ${term}":
+    echo "included: "`cat includes.txt | grep "${term}" | wc -l`
+    echo "excluded: "`cat excludes.txt | grep "${term}" | wc -l`
+    
+done

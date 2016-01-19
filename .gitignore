@@ -4,8 +4,9 @@
 *.pyc
 *.swp
 *.pdf
-
+.backup*
 documents/*.aux
 documents/*.log
 documents/*.odt
 documents/exportProposal
+*.~*

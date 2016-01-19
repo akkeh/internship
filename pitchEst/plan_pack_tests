@@ -1,0 +1,27 @@
+#! /bin/bash
+
+# philharmonia
+./testPackESS ../sounds/philharmonia/violin/ philharmonia results/philharmonia_violin_ESS.txt 
+#./testPackESS ../sounds/philharmonia/violin/ philharmonia results/philharmonia_violin_ESS_win.txt 'hann'
+./testPackESS ../sounds/philharmonia/guitar/ philharmonia results/philharmonia_guitar_ESS.txt 
+#./testPackESS ../sounds/philharmonia/guitar/ philharmonia results/philharmonia_guitar_ESS_win.txt 'hann'
+
+# IOWA
+./testPackESS ../sounds/IOWA/ IOWA results/IOWA_ESS.txt  
+#./testPackESS ../sounds/IOWA/ IOWA results/IOWA_ESS_win.txt 'hann'
+
+
+# carlos:
+./testPackESS ../sounds/carlos/ carlos results/carlos_ESS.txt  
+#./testPackESS ../sounds/carlos/ carlos results/carlos_ESS_win.txt 'hann'
+./testPackJSON ../sounds/carlos/ carlos results/carlos_JSON.txt
+
+# good-sounds:
+./testPackESS ../sounds/good-sounds/ good-sounds results/good-sounds_ESS.txt  
+#./testPackESS ../sounds/good-sounds/ good-sounds results/good-sounds_ESS_win.txt 'hann'
+./testPackJSON ../sounds/good-sounds/ good-sounds results/good-sounds_JSON.txt
+
+# modularsamples:
+./testPackESS ../sounds/modularsamples/ modularsamples results/modularsamples_ESS.txt  
+#./testPackESS ../sounds/modularsamples/ modularsamples results/modularsamples_ESS_win.txt 'hann'
+./testPackJSON ../sounds/modularsamples/ modularsamples results/modularsamples_JSON.txt

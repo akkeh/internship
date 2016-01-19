@@ -67,8 +67,9 @@ def calc_stats(fn, ofile):
         
         
 
-def predictEstErr(fn, evaluate='absErr', predict='conf', inverse_eval=False, inverse_predict=False, plot=0):
-    data = dm.getData(fn)
+def predictEstErr(fn='', data='', evaluate='absErr', predict='conf', inverse_eval=False, inverse_predict=False, plot=0):
+    if data == '':
+        data = dm.getData(fn)
     
     evalVals = abs(dm.getField(data, evaluate))
     if inverse_eval:

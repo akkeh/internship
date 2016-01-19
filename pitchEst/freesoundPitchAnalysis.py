@@ -34,7 +34,7 @@ def getJsonData(jsonFile):
         data = json.load(file)
     return data
 
-def getNoteFromJSON(d, pack=''):
+def getNoteFromJSON(d, pack):
     '''
         
     '''
