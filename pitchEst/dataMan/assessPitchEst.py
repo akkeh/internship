@@ -54,6 +54,8 @@ def calc_stats(fn, ofile):
     pTag_sd_w_ERBerr_lt_2 = dm.stddev(pTag[i_ERBerr_lt_2])
     pTag_m_w_ERBerr_gt_2 = np.mean(pTag[i_ERBerr_gt_2])
     pTag_sd_w_ERBerr_gt_2 = dm.stddev(pTag[i_ERBerr_gt_2])
+    pTag_m_w_ERBerr_lt_m = np.mean(pTag[i_loERBerr])
+    pTag_m_w_ERBerr_gt_m = np.mean(pTag[i_hiERBerr])
     print "mean pTag: "+str(pTag_m), "std dev: "+str(pTag_sd)
     print "mean pTag | ERBerr < 2: "+str(pTag_m_w_ERBerr_lt_2), "std dev: "+str(pTag_sd_w_ERBerr_lt_2)
     print "mean pTag | ERBerr > 2: "+str(pTag_m_w_ERBerr_gt_2), "std dev: "+str(pTag_sd_w_ERBerr_gt_2)
@@ -61,13 +63,20 @@ def calc_stats(fn, ofile):
     print len(i_ERBerr_lt_2)
     print len(absErr), len(i_hiERBerr) + len(i_loERBerr)
     # write statistics to file:
-    stat = [len(absErr), absErr_m, absErr_sd, len(i_loErr), absERBerr_m, absERBerr_sd, len(i_loERBerr), len(i_ERBerr_lt_2), pTag_m, pTag_m_w_ERBerr_lt_2]
+    stat = [len(absErr), absErr_m, absErr_sd, len(i_loErr), absERBerr_m, absERBerr_sd, len(i_loERBerr), len(i_ERBerr_lt_2), pTag_m, pTag_m_w_ERBerr_lt_2, pTag_m_w_ERBerr_gt_2, pTag_m_w_ERBerr_lt_m, pTag_m_w_ERBerr_gt_m]
     with open(ofile, 'a') as of:
-        of.write(ofile+"\n")
+        of.write(fn+", ")
         for val in stat:
-            of.write(str(val)+'\t')
+            of.write(str(val)+', ')
         of.write("\n")
-        
+
+    with open('name_ERBerr.txt', 'a') as of:
+        name = dm.getField(d, 'name')
+        pEst = dm.getField(d, 'pEst')
+        midi = dm.getField(d, 'midi')
+        for i in range(len(absERBerr)):
+            if absERBerr[i] > absERBerr_m:
+                of.write(str(name[i].split('/')[1])+",\t"+str(pEst[i])+",\t"+str(pTag[i])+",\t"+str(absERBerr[i])+"\n")
         
 import sys, os
 

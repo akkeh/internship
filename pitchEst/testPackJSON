@@ -10,13 +10,14 @@ fi
 DIR=$1
 PACK=$2
 OUT=$3
-OUTP=`cat outputs`
+OUTP="name,err,absErr,midinote,pTag,pEst,pEstVar,salience"
 errTH=""
 if [ $# -gt `echo "${ARGCOUNT}" | bc` ];
 then
     echo "with: ${4}"
     errTH=$4
 fi
+rm -i ${OUT}
 `echo "name,err,absErr,midinote,pTag,pEst,pEstVar,salience" > "${OUT}"`
 for jsonFile in ${DIR}/*.json
 do

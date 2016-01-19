@@ -143,27 +143,28 @@ def tag_vs_freesoundAnalysis(jsonFile, pack=""):
 def str_to_out(outp):
     name, err, absErr, midinote, pTag, pEst, pEstVar, salience = np.arange(8)
     return eval(outp)
-'''
+
 if len(sys.argv) < ARGCOUNT + 1:
     print "usage: test_freesoundPitchAnalysis [.json file][pack][printfile][out1,out2,out3]"
 else:
     jsonFile = sys.argv[1]
     pack = sys.argv[2]
     printFile = sys.argv[3]
-    outp = sys.argv[4]
-    if len(sys.argv) > ARGCOUNT + 2:
-        th = float(sys.argv[5])
-        input("hahaha")
-    res = tag_vs_freesoundAnalysis(jsonFile, pack)
-    if res == 'unpitched':
-        print "Unpitched sound!"
-    else:
-         
-        outp = outp.split(",")
-        
-        with open(printFile, "a") as outfile:
+    if printFile.find('JSON') > -1:
+        outp = sys.argv[4] 
+
+        res = tag_vs_freesoundAnalysis(jsonFile, pack)
+        if res == 'unpitched':
+            print "Unpitched sound!"
+        else:
+             
+            outp = outp.split(",")
             
-            for out in outp:
-                outfile.write(str(res[str_to_out(out)])+"\t")
-            outfile.write("\n")
-'''
+            with open(printFile, "a") as outfile:
+                
+                for out in outp:
+                    outfile.write(str(res[str_to_out(out)])+"\t")
+                outfile.write("\n")
+
+
+

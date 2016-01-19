@@ -9,6 +9,7 @@ fi
 
 DIR=$1
 PACK=$2
+echo "${PACK}"
 OUT=$3
 
 rm -i ${OUT}
@@ -26,8 +27,9 @@ if [ ${PACK} == "IOWA" ];
 then
     EXT=".aiff"
 fi
-if [ ${PACK} == "philharmonica" ];
+if [ ${PACK} == "philharmonia" ];
 then
+    echo "chaning extention to: .mp3"
     EXT=".mp3"
 fi
 
