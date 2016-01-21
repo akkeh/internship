@@ -13,8 +13,8 @@ th = -999
 def freq_to_MIDInote(f, fref=440.):
     return int(np.log2(f / float(fref)) * 12 + 49)
 
-def MIDInote_to_freq(nn, fref=440.0):
-    return float(fref) * 2**((nn-49) / 12.)
+def MIDInote_to_freq(nn, fref=440.0, nnA=49):
+    return float(fref) * 2**((nn-nnA) / 12.)
 
 def noteName_to_noteNr(note):
     '''
@@ -124,11 +124,18 @@ def tag_vs_freesoundAnalysis(jsonFile, pack=""):
     if midinote == -1:
         with open('./unpitched.txt', 'a') as upsl:
             upsl.write(str(d['name'])+"\n")
+            
         return 0
     fref = getFrefFromJSON(d, pack)
     if fref == -1:
         fref = 440.0
-    pTag = MIDInote_to_freq(midinote, fref=fref)
+    nnA = 49
+    if pack == 'modularsamples':
+        input("using 69")
+        nnA = 69
+    else:
+        nnA = 49
+    pTag = MIDInote_to_freq(midinote, fref=fref, nnA=nnA)
     pEst, pEstVar, salience, salienceVar = getPitchFromJSON(d)
    
     err = pEst - pTag 
