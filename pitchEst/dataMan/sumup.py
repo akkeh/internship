@@ -83,59 +83,70 @@ def writeArray(arr, fn):
         for val in arr:
             f.write(val+'\n')
 
+
            
-files = ['../results/carlos_ESS.txt', '../results/good-sounds_ESS.txt', '../results/IOWA_ESS.txt', '../results/philharmonia_guitar_ESS.txt', '../results/philharmonia_violin_ESS.txt', '../results/modularsamples_ESS.txt']
-d = getAllData(files)
+files = ['../results/carlos_ESS.txt', '../results/good-sounds_ESS.txt', '../results/IOWA_ESS.txt', '../results/philharmonia_guitar_ESS.txt', '../results/philharmonia_violin_ESS.txt', '../results/philharmonia_cello_ESS.txt', '../results/philharmonia_clarinet_ESS.txt', '../results/modularsamples_ESS_mod.txt']
 
-pTag = dm.getField(d, 'pTag')
-pEst = dm.getField(d, 'pEst')
-err = dm.getField(d, 'err')
-ERBd = dm.getField(d, 'ERBdist')
+filelists = [ files, files[:-1] ]
 
-print "pEst > pTag?: "+str( len(np.where(pEst > pTag)[0]) / float(len(pTag)))
-print "mean of error: "+str(np.mean(err))
-print "\t for ERB: "+str(np.mean(ERBd))
-print ''
+def sumup(files):
+    print ""
+    print "---------------------------------------------------------------------------------------------------------------------------------------"
+    print "Files", files
+    print "---------------------------------------------------------------------------------------------------------------------------------------"
+    d = getAllData(files)
 
- 
-print "ERBdist < 2"
-e, i = pTags_vs_err(d, 'ERBdist', 2)
-print("stddev\n\tinc: "+str(dm.stddev(pTag[i]))+"\texc: "+str(dm.stddev(pTag[e])))
-print ''
-print "ERBdist < m"
-e, i = pTags_vs_err(d, 'ERBdist')
-print("stddev\n\tinc: "+str(dm.stddev(pTag[i]))+"\texc: "+str(dm.stddev(pTag[e])))
-print ''
-print "err < m"
-e, i = pTags_vs_err(d, 'err')
-print("stddev\n\tinc: "+str(dm.stddev(pTag[i]))+"\texc: "+str(dm.stddev(pTag[e])))
-print ''
+    pTag = dm.getField(d, 'pTag')
+    pEst = dm.getField(d, 'pEst')
+    err = dm.getField(d, 'err')
+    ERBd = dm.getField(d, 'ERBdist')
 
+    print "pEst > pTag?: "+str( len(np.where(pEst > pTag)[0]) / float(len(pTag)))
+    print "mean of error: "+str(np.mean(err))
+    print "\t for ERB: "+str(np.mean(ERBd))
+    print ''
 
-print "confidence < mean:"
-e, i = pTags_vs_err(d, 'conf')
-print("stddev\n\tinc: "+str(dm.stddev(pTag[i]))+"\texc: "+str(dm.stddev(pTag[e])))
-print ''
-
-print "---------------------------------Confidence predicts:"
-print "ERBdist:"
-e, p, tP, tN, fP, fN = pEE.predictEstErr(data=d, evaluate='ERBdist', plot=0)
-print "confidence got: "+str((len(tP[1])+len(tN[1]))/float(len(tP[1])+len(tN[1])+len(fP[1])+len(fN[1])))+" correct"
-print ''
-
-print "err:"
-e, p, tP, tN, fP, fN = pEE.predictEstErr(data=d, evaluate='err', plot=0)
-print "confidence got: "+str((len(tP[1])+len(tN[1]))/float(len(tP[1])+len(tN[1])+len(fP[1])+len(fN[1])))+" correct"
-
-print "---------------------------------salience predicts:"
-print "ERBdist:"
-e, p, tP, tN, fP, fN = pEE.predictEstErr(data=d, predict='sal', evaluate='ERBdist', plot=0)
-print "salience got: "+str((len(tP[1])+len(tN[1]))/float(len(tP[1])+len(tN[1])+len(fP[1])+len(fN[1])))+" correct"
-print ''
-
-print "err:"
-e, p, tP, tN, fP, fN = pEE.predictEstErr(data=d, predict='sal', evaluate='err', plot=0)
-print "salience got: "+str((len(tP[1])+len(tN[1]))/float(len(tP[1])+len(tN[1])+len(fP[1])+len(fN[1])))+" correct"
+     
+    print "ERBdist < 2"
+    e, i = pTags_vs_err(d, 'ERBdist', 2)
+    print("stddev\n\t< 2: "+str(dm.stddev(pTag[i]))+"\t> 2: "+str(dm.stddev(pTag[e])))
+    print ''
+    print "ERBdist < m"
+    e, i = pTags_vs_err(d, 'ERBdist')
+    print("stddev\n\tinc: "+str(dm.stddev(pTag[i]))+"\texc: "+str(dm.stddev(pTag[e])))
+    print ''
+    print "err < m"
+    e, i = pTags_vs_err(d, 'err')
+    print("stddev\n\tinc: "+str(dm.stddev(pTag[i]))+"\texc: "+str(dm.stddev(pTag[e])))
+    print ''
 
 
+    print "confidence < mean:"
+    e, i = pTags_vs_err(d, 'conf')
+    print("stddev\n\tinc: "+str(dm.stddev(pTag[i]))+"\texc: "+str(dm.stddev(pTag[e])))
+    print ''
 
+    print "---------------------------------Confidence predicts:"
+    print "ERBdist:"
+    e, p, tP, tN, fP, fN = pEE.predictEstErr(data=d, evaluate='ERBdist', plot=0)
+    print "confidence got: "+str((len(tP[1])+len(tN[1]))/float(len(tP[1])+len(tN[1])+len(fP[1])+len(fN[1])))+" correct"
+    print ''
+
+    print "err:"
+    e, p, tP, tN, fP, fN = pEE.predictEstErr(data=d, evaluate='err', plot=0)
+    print "confidence got: "+str((len(tP[1])+len(tN[1]))/float(len(tP[1])+len(tN[1])+len(fP[1])+len(fN[1])))+" correct"
+
+    print "---------------------------------salience predicts:"
+    print "ERBdist:"
+    e, p, tP, tN, fP, fN = pEE.predictEstErr(data=d, predict='sal', evaluate='ERBdist', plot=0)
+    print "salience got: "+str((len(tP[1])+len(tN[1]))/float(len(tP[1])+len(tN[1])+len(fP[1])+len(fN[1])))+" correct"
+    print ''
+
+    print "err:"
+    e, p, tP, tN, fP, fN = pEE.predictEstErr(data=d, predict='sal', evaluate='err', plot=0)
+    print "salience got: "+str((len(tP[1])+len(tN[1]))/float(len(tP[1])+len(tN[1])+len(fP[1])+len(fN[1])))+" correct"
+
+
+
+for files in filelists:
+    sumup(files)

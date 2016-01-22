@@ -10,8 +10,8 @@ ARGCOUNT = 3
 def freq_to_MIDInote(f, fref=440.):
     return int(np.log2(f / float(fref)) * 12 + 49) 
 
-def MIDInote_to_freq(nn, fref=440.0):
-    return float(fref) * 2**((nn-49) / 12.)
+def MIDInote_to_freq(nn, fref=440.0, nnA=49):
+    return float(fref) * 2**((nn-nnA) / 12.)
 
 def noteName_to_noteNr(note):
     ''' 
@@ -69,7 +69,10 @@ else:
         nn = frsndPA.getNoteFromJSON(frsndPA.getJsonData(fn.split('.ogg')[0]+'.json'), pack)
     else:
         nn = getMIDINoteFromFilename(fn, pack)
-    pTag = MIDInote_to_freq(nn)
+    nnA = 49
+    if pack == 'modularsamples':
+        nnA = 69
+    pTag = MIDInote_to_freq(nn, nnA=nnA)
     
     # calculate pitchYinFFT & pitchSalience:
     pEst, conf, sal = essP.essPitchAnalysis(fn, win)
@@ -79,8 +82,9 @@ else:
     res = [ fn, err, absErr, nn, pTag, pEst, conf, sal ]
 
     # write to file:
-    with open(outfile, "a") as of:
-        for i in range(len(res)):
-            of.write(str(res[i])+"\t")
-        of.write("\n")
+    if nn > -1:
+        with open(outfile, "a") as of:
+            for i in range(len(res)):
+                of.write(str(res[i])+"\t")
+            of.write("\n")
 

@@ -131,19 +131,13 @@ def tag_vs_freesoundAnalysis(jsonFile, pack=""):
         fref = 440.0
     nnA = 49
     if pack == 'modularsamples':
-        input("using 69")
         nnA = 69
-    else:
-        nnA = 49
     pTag = MIDInote_to_freq(midinote, fref=fref, nnA=nnA)
     pEst, pEstVar, salience, salienceVar = getPitchFromJSON(d)
    
     err = pEst - pTag 
     absErr = abs(err)
-    if th > 0:
-        if abs(err) > th:
-            with open('./bigErr.txt', 'a') as bE:
-                bE.write(str(d['name'])+"\terr: "+str(err)+"\ttag: "+str(pTag)+"\tfound: "+str(pEst)+"\n")
+    print "abs err: ", absErr
     return d['name'], err, absErr, midinote, pTag, pEst, pEstVar, salience, salienceVar
 
 
@@ -164,7 +158,7 @@ else:
         if res == 'unpitched':
             print "Unpitched sound!"
         else:
-             
+            print "results: ", res, "pack :", pack
             outp = outp.split(",")
             
             with open(printFile, "a") as outfile:
