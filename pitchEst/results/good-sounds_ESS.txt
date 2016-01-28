@@ -1,5 +1,4 @@
 name,err,absErr,midinote,pTag,pEst,confidence,salience
-../sounds/good-sounds//cello-D2.wav.ogg	48.6161833835	48.6161833835	-1	24.4997147489	73.1158981323	0.975481569767	0.458323687315	
 ../sounds/good-sounds//overall quality of single note - cello - A#2.ogg	0.228300953485	0.228300953485	26	116.54094038	116.769241333	0.990750432014	0.643742918968	
 ../sounds/good-sounds//overall quality of single note - cello - A2.ogg	0.383934020996	0.383934020996	25	110.0	110.383934021	0.988205611706	0.550289869308	
 ../sounds/good-sounds//overall quality of single note - cello - A#3.ogg	1.25698642846	1.25698642846	38	233.081880759	234.338867188	0.995573878288	0.55994284153	
@@ -52,7 +51,6 @@ name,err,absErr,midinote,pTag,pEst,confidence,salience
 ../sounds/good-sounds//overall quality of single note - clarinet - F#5.ogg	9.68437235017	9.68437235017	58	739.988845423	749.673217773	0.999829292297	0.249691039324	
 ../sounds/good-sounds//overall quality of single note - clarinet - F#6.ogg	8.27291950502	8.27291950502	70	1479.97769085	1488.25061035	1.00015282631	0.406327694654	
 ../sounds/good-sounds//overall quality of single note - clarinet - F6.ogg	14.9774551274	14.9774551274	69	1396.91292573	1411.89038086	0.998946070671	0.491688519716	
-../sounds/good-sounds//overall quality of single note - clarinet - G3.ogg	1.28785024643	1.28785024643	35	195.997717991	197.285568237	0.996273398399	0.575062215328	
 ../sounds/good-sounds//overall quality of single note - clarinet - G#4.ogg	1.4252828888	1.4252828888	48	415.30469758	416.729980469	0.999767124653	0.361919105053	
 ../sounds/good-sounds//overall quality of single note - clarinet - G4.ogg	4.91966411591	4.91966411591	47	391.995435982	396.915100098	0.999711573124	0.513835608959	
 ../sounds/good-sounds//overall quality of single note - clarinet - G5.ogg	10.8115572357	10.8115572357	59	783.990871963	794.802429199	0.999674737453	0.251037418842	
@@ -96,7 +94,6 @@ name,err,absErr,midinote,pTag,pEst,confidence,salience
 ../sounds/good-sounds//overall quality of single note - trumpet - A#5.ogg	-8.19782332915	8.19782332915	62	932.327523036	924.129699707	0.996373176575	0.446816951036	
 ../sounds/good-sounds//overall quality of single note - trumpet - A5.ogg	-10.240234375	10.240234375	61	880.0	869.759765625	0.994344890118	0.547811448574	
 ../sounds/good-sounds//overall quality of single note - trumpet - B4.ogg	-3.75112962526	3.75112962526	51	493.883301256	490.132171631	0.951418042183	0.732840895653	
-../sounds/good-sounds//overall quality of single note - trumpet - B5.ogg	0.065733913533	0.065733913533	63	987.766602512	987.832336426	0.999651610851	0.293311953545	
 ../sounds/good-sounds//overall quality of single note - trumpet - C#4.ogg	0.498338261409	0.498338261409	41	277.182630977	277.680969238	0.879628539085	0.71008503437	
 ../sounds/good-sounds//overall quality of single note - trumpet - C4.ogg	3.65598987518	3.65598987518	40	261.625565301	265.281555176	0.824536681175	0.706974625587	
 ../sounds/good-sounds//overall quality of single note - trumpet - C#5.ogg	-8.19906322328	8.19906322328	53	554.365261954	546.16619873	0.959243774414	0.596078753471	
