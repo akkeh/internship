@@ -21,7 +21,7 @@ def readData(fn):
         with open(fn) as f:
             f.readline();   # skip first line
             
-            d = np.append(d, field)
+            d = np.append(d, field.split('\n')[0])
             line = f.readline();
             while line != '':
                 d = np.append(d, line.split('\t')[col])

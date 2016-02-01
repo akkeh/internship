@@ -6,3 +6,7 @@ Pitch Estimation:
     -   improvements of usage of pitchYinFFT?  
     -   improve pitchYinFFT?
     ->  delve into code of pitchYinFFT
+
+download good-sounds & modularsamples:
+    freesoundAPI/modularsamples/tmp/page.json
+    freesoundAPI/good-sounds/tmp/pack1.json

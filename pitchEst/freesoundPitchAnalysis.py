@@ -110,8 +110,9 @@ def getPitchFromJSON(d):
     '''
     pitch = d['analysis']['lowlevel']['pitch']
     salience = d['analysis']['lowlevel']['pitch_salience']
+    confidence = d['analysis']['lowlevel']['pitch_instantaneous_confidence']
     
-    return pitch['mean'], pitch['var'], salience['mean'], salience['var']
+    return pitch['mean'], pitch['var'], salience['mean'], salience['var'], confidence['mean']
 
 
 def tag_vs_freesoundAnalysis(jsonFile, pack=""):
@@ -133,16 +134,16 @@ def tag_vs_freesoundAnalysis(jsonFile, pack=""):
     if pack == 'modularsamples':
         nnA = 69
     pTag = MIDInote_to_freq(midinote, fref=fref, nnA=nnA)
-    pEst, pEstVar, salience, salienceVar = getPitchFromJSON(d)
+    pEst, pEstVar, salience, salienceVar, conf = getPitchFromJSON(d)
    
     err = pEst - pTag 
     absErr = abs(err)
     print "abs err: ", absErr
-    return d['name'], err, absErr, midinote, pTag, pEst, pEstVar, salience, salienceVar
+    return d['name'], err, absErr, midinote, pTag, pEst, pEstVar, salience, salienceVar, conf
 
 
 def str_to_out(outp):
-    name, err, absErr, midinote, pTag, pEst, pEstVar, salience = np.arange(8)
+    name, err, absErr, midinote, pTag, pEst, pEstVar, salience, conf = np.arange(9)
     return eval(outp)
 
 if len(sys.argv) < ARGCOUNT + 1:

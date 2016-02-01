@@ -1,1 +1,1 @@
-descriptors=lowlevel.pitch,lowlevel.pitch_salience
+descriptors=lowlevel.pitch,lowlevel.pitch_instantaneous_confidence,lowlevel.pitch_salience
