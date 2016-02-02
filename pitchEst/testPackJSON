@@ -10,7 +10,7 @@ fi
 DIR=$1
 PACK=$2
 OUT=$3
-OUTP="name,err,absErr,midinote,pTag,pEst,pEstVar,salience"
+OUTP="name,err,absErr,midinote,pTag,pEst,conf,salience"
 errTH=""
 if [ $# -gt `echo "${ARGCOUNT}" | bc` ];
 then
@@ -18,7 +18,7 @@ then
     errTH=$4
 fi
 rm -i ${OUT}
-`echo "name,err,absErr,midinote,pTag,pEst,pEstVar,confidence,salience" > "${OUT}"`
+`echo "${OUTP}" > "${OUT}"`
 for jsonFile in ${DIR}/*.json
 do
     echo "File: ${jsonFile}"

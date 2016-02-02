@@ -51,7 +51,7 @@ else:
             # download .json file for pack:
             url = pack['sounds']+"?format=json&token="+token+"&"+fields+"&"+desc
            
-            print "Getting sounds from pack: "+str(packId)+" ("+url+")" 
+            print "Getting sounds from pack: "+str(packId)#+" ("+url+")" 
             os.system('wget -qO"'+outdir+'tmp/'+'pack'+str(pack['id'])+'.json" '+'"'+url+'"');
             # download sounds here!
                         
@@ -61,16 +61,26 @@ else:
         # get next page
         if type(data['next']) == unicode:   # is there a next page?
             print "Next page: "+data['next']+'&token='+token
-            os.system('rm '+outdir+'tmp/page.json')
+            #os.system('rm '+outdir+'tmp/page.json')
             pageurl = '"'+data['next']
             if pageurl.find('format') == -1:
                 pageurl = pageurl+'&format=json'
             if pageurl.find('token') == -1:
                 pageurl = pageurl+'&token='+token
             pageurl = pageurl+'"'
-            os.system('wget -qO'+'"'+outdir+'tmp/page.json" '+pageurl)
-         
-            with open(outdir+'tmp/page.json') as infile:
-                data = json.load(infile)
+            data = ''
+            tries = 0
+            while data == '' and tries < 10:
+                print "trying to download next page:\n\t"+pageurl
+                print "try "+str(tries+1)+" of 10" 
+                os.system('rm '+outdir+'tmp/page.json')
+                os.system('wget -qO'+'"'+outdir+'tmp/page.json" '+pageurl)
+                
+                with open(outdir+'tmp/page.json') as infile:
+                    try:
+                        data = json.load(infile)
+                    except:
+                        data = ''
+                        tries += 1
         else:
             break

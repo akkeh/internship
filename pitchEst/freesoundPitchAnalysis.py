@@ -143,7 +143,7 @@ def tag_vs_freesoundAnalysis(jsonFile, pack=""):
 
 
 def str_to_out(outp):
-    name, err, absErr, midinote, pTag, pEst, pEstVar, salience, conf = np.arange(9)
+    name, err, absErr, midinote, pTag, pEst, pEstVar, salience, salienceVar, conf = np.arange(10)
     return eval(outp)
 
 if len(sys.argv) < ARGCOUNT + 1:
