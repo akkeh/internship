@@ -64,15 +64,19 @@ else:
 
     print "File: "+fn
     # get notenumber and frequency from filename:
-    
+   
+    fref = 440.0 
     if pack == 'carlos' or pack == 'good-sounds' or pack == 'modularsamples':
         nn = frsndPA.getNoteFromJSON(frsndPA.getJsonData(fn.split('.ogg')[0]+'.json'), pack)
+        fref = frsndPA.getFrefFromJSON(frsndPA.getJsonData(fn.split('.ogg')[0]+'.json'), pack)
+        if fref == -1:
+            fref = 440.0
     else:
         nn = getMIDINoteFromFilename(fn, pack)
     nnA = 49
     if pack == 'modularsamples':
         nnA = 69
-    pTag = MIDInote_to_freq(nn, nnA=nnA)
+    pTag = MIDInote_to_freq(nn, nnA=nnA, fref=fref)
     
     # calculate pitchYinFFT & pitchSalience:
     pEst, conf, sal = essP.essPitchAnalysis(fn, win)

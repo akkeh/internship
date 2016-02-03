@@ -1,4 +1,4 @@
-name,err,absErr,midinote,pTag,pEst,conf,salience
+name,err,absErr,midinote,pTag,pEst,confidence,salience
 overall quality of single note - cello - A#2	1.7876344748	1.7876344748	26	116.54094038	118.328574854	0.715138922719	0.473347401319	
 overall quality of single note - cello - A#3	-17.1738674	17.1738674	38	233.081880759	215.908013359	0.743679412384	0.475216448342	
 overall quality of single note - cello - A3	7.10386916589	7.10386916589	37	220.0	227.103869166	0.845941526885	0.539112978088	

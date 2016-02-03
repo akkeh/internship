@@ -46,7 +46,7 @@ def essPitchAnalysis_rolling(filename, window, M):
     x = loader();
     N = len(x)
    
-    spec = esstd.Sectrum();
+    spec = esstd.Spectrum();
 
     # frame sound:
     pitch = np.array([]);
