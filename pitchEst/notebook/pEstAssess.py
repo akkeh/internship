@@ -1,41 +1,65 @@
 import numpy as np
 
-def readData(fn):
-    '''
-    Read data from the results directory. Formatted:
-    fields: comma separated.
-    Data:   '\t' separeted.
-    '''
-    with open(fn) as f:
-        N = 0;  # linecount
-        fields = f.readline().split(',')
-        M = len(fields)    # collum count
-        while f.readline() != '':
-            N += 1              
+def ERB(fc):
+    return 24.7 + (0.108 * fc)
+
+def ERBdist(pTag, pEst):
+    if str(type(pTag)).find('array') > -1:
+        N = len(pTag)
+        if N != len(pEst):
+            return nan
+    else:
+        N = 1
+    y = np.zeros(N)
+    for n in range(N):
+        if N > 1:
+            tag = pTag[n];
+            est = pEst[n];
+        else:
+            tag = pTag
+            est = pEst;
+        fc = tag
+        erb = ERB(tag)  # get equivalent rectangluar bandwidth
     
-    data = np.ndarray(shape=(M, N+1), dtype='|S32')   # create data matrix
-    
-    col = 0
-    for field in fields:
-        d = np.array([], dtype='|S32')
-        with open(fn) as f:
-            f.readline();   # skip first line
-            
-            d = np.append(d, field.split('\n')[0])
-            line = f.readline();
-            while line != '':
-                d = np.append(d, line.split('\t')[col])
-                line = f.readline()
-            data[col] = d
-            col += 1           
-    return data
+        if est > tag:
+            while fc < est:
+                fc = fc + ERB(fc) / 2.
+                y[n] +=1
+        elif est < tag:
+            while fc > est:
+                fc = fc - ERB(fc) / 2.
+                y[n] -= 1
+    return y
 
 
-def getField(data, field):
-    M = len(data)
-    out = np.array([])
-    for col in range(M):
-        if data[col][0] == field:
-            for row in np.arange(len(data[col]) - 1)+1:
-                out = np.append(out, data[col][row])
-    return out
+def semitoneDist(pTag, pEst):
+    if str(type(pTag)).find('array') > -1:
+        N = len(pTag)
+        if N != len(pEst):
+            return nan
+    else:
+        N = 1
+    y = np.zeros(N)
+    for n in range(N):
+        if N > 1:
+            tag = pTag[n];
+            est = pEst[n];
+        else:
+            tag = pTag;
+            est = pEst;
+        y[n] = np.log2(est / float(tag)) * 12.
+    
+    return y
+   
+
+def isOctErr(pTag, pEst):
+    stDist = semitoneDist(pTag, pEst)
+   
+    ind = np.where(np.round(abs(stDist) % 12) == 0)
+    
+    y = np.zeros(len(stDist))
+    for i in ind[0]:
+        if int(stDist[i]) != 0:
+            y[i] = int(stDist[i])
+    return y
+     

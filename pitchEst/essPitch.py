@@ -36,34 +36,40 @@ def essPitchAnalysis(filename, window):
     sal = pSal(X)
     return pitch, conf, sal
 
-def essPitchAnalysis_rolling(filename, window, M):
-    pYin = esstd.PitchYinFFT()  # pitch estimation algorithm
-    pSal = esstd.PitchSalience()    # pitch salience
-    if window != '' and window != 'none':
-        win = esstd.Windowing(type=window)    # pitch salience
+def essPitchAnalysis_rolling(filename, window, zp=0, M=2048, H=1024):
     # load audiofile:
     loader = esstd.MonoLoader(filename = filename)
     x = loader();
     N = len(x)
-   
+    
+    # frame cutter
+    fc = esstd.FrameCutter(frameSize=M, hopSize=H);
+    
+    # window:
+    w = esstd.Windowing(type=window, zeroPadding=zp);
+
+    # spectrum:
     spec = esstd.Spectrum();
+
+    pYin = esstd.PitchYinFFT(frameSize=M);    
+
+    pSal = esstd.PitchSalience()    # pitch salience
 
     # frame sound:
     pitch = np.array([]);
     conf = np.array([]);
     sal = np.array([]);
 
-    for m in range(int(N/M)):
+    for m in range(int((N-M)/H)):
         # get spectrum:
-        X = spec(x[M*m: M*(m+1)])
-                
-        if window != '' and window != 'none':
-            X = win(X)
+        frame = fc(x)
+        mX = spec(w(frame))
+        
         # calculate pitch:
-        t_pitch, t_conf = pYin(X)
+        t_pitch, t_conf = pYin(mX)
         pitch = np.append(pitch, t_pitch)
         conf = np.append(conf, t_conf)
-        t_sal = pSal(X)
+        t_sal = pSal(mX)
         sal = np.append(sal, t_sal);
         
     return np.mean(pitch), np.mean(conf), np.mean(sal)
