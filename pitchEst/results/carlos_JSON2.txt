@@ -1,4 +1,4 @@
-name,err,absErr,midinote,pTag,pEst,conf,salience
+name,err,absErr,midinote,pTag,pEst,confidence,salience
 Alto-Recorder A-4 Staccato Non-Vibrato 	-181.915050344	181.915050344	49	440.0	258.084949656	0.456483761804	0.473028095073	
 Alto-Recorder A#-4 Staccato Non-Vibrato 	-173.03569421	173.03569421	50	466.163761518	293.128067308	0.483719141751	0.472873682639	
 Alto-Recorder A -5 Staccato Non-Vibrato 	-437.555298801	437.555298801	61	880.0	442.444701199	0.464379358702	0.416375027301	

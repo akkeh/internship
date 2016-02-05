@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 def ERB(fc):
     return 24.7 + (0.108 * fc)
@@ -52,6 +53,35 @@ def semitoneDist(pTag, pEst):
     return y
    
 
+def predict(pr, ev, pr_th=-999, ev_th = -999, plot=0):
+    pr = abs(pr)    # predictor
+    ev = abs(ev)    # evaluator
+    pr_mu = np.mean(pr)
+    ev_mu = np.mean(ev)
+
+    if pr_th > 0:
+        pr_mu = pr_th
+    if ev_th > 0:
+        ev_mu = ev_th    
+
+    pos = np.where(ev < ev_mu)[0]  # get positives
+    neg = np.where(ev >= ev_mu)[0] # get negatives
+
+    tP = pos[np.where(pr[pos] > pr_mu)]
+    tN = neg[np.where(pr[neg] <= pr_mu)]
+    fP = pos[np.where(pr[pos] <= pr_mu)]
+    fN = neg[np.where(pr[neg] > pr_mu)]
+    
+
+    if plot == 1:
+        plt.plot(pr[tP], ev[tP], '.')
+        plt.plot([pr_mu * 0.9999999, pr_mu, pr_mu * 1.000000001], [0, max(ev), 0])
+        plt.plot([min(pr), max(pr)], [np.mean(ev), np.mean(ev)])
+        plt.plot(pr[fN], ev[fN], '.')
+        plt.plot(pr[tN], ev[tN], '.')
+        plt.plot(pr[fP], ev[fP], '.')
+
+    return tP, tN, fP, fN
 def isOctErr(pTag, pEst):
     stDist = semitoneDist(pTag, pEst)
    
@@ -62,4 +92,6 @@ def isOctErr(pTag, pEst):
         if int(stDist[i]) != 0:
             y[i] = int(stDist[i])
     return y
-     
+    
+
+ 
