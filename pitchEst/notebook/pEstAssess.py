@@ -74,13 +74,14 @@ def predict(pr, ev, pr_th=-999, ev_th = -999, plot=0):
     
 
     if plot == 1:
-        plt.plot(pr[tP], ev[tP], '.')
-        plt.plot([pr_mu * 0.9999999, pr_mu, pr_mu * 1.000000001], [0, max(ev), 0])
-        plt.plot([min(pr), max(pr)], [np.mean(ev), np.mean(ev)])
-        plt.plot(pr[fN], ev[fN], '.')
-        plt.plot(pr[tN], ev[tN], '.')
-        plt.plot(pr[fP], ev[fP], '.')
-
+        plt.plot(pr[tP], ev[tP], '.', label='tP')
+        plt.plot([pr_mu * 0.9999999, pr_mu, pr_mu * 1.000000001], [0, max(ev), 0], label='pr. bnd')
+        plt.plot([min(pr), max(pr)], [np.mean(ev), np.mean(ev)], label='ev. bnd')
+        plt.plot(pr[fN], ev[fN], '.', label='fN')
+        plt.plot(pr[tN], ev[tN], '.', label='tN')
+        plt.plot(pr[fP], ev[fP], '.', label='fP')
+        
+        plt.legend( loc='upper left', numpoints = 1 )
     return tP, tN, fP, fN
 def isOctErr(pTag, pEst):
     stDist = semitoneDist(pTag, pEst)
