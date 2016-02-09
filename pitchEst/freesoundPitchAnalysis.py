@@ -62,7 +62,7 @@ def getNoteFromJSON(d, pack):
         tags = d['tags']
         i = 0
         note = tags[i]
-        while note.find('midi') == -1 and i < len(tags):
+        while note.find('midi-note') == -1 and i < len(tags):
             note = tags[i]
             i += 1
         if note == '':
