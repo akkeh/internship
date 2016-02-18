@@ -10,3 +10,4 @@ documents/*.log
 documents/*.odt
 documents/exportProposal
 *.~*
+./pitchEst/notebook/sounds

@@ -53,9 +53,16 @@ def semitoneDist(pTag, pEst):
     return y
    
 
-def predict(pr, ev, pr_th=-999, ev_th = -999, plot=0):
+def predict(pr, ev, pr_th=-999, ev_th = -999, plot=0, invEval=False, invPred=False):
     pr = abs(pr)    # predictor
     ev = abs(ev)    # evaluator
+
+    if invEval == True:
+        ev = -ev
+
+    if invPred == True:
+        pr = -pr
+
     pr_mu = np.mean(pr)
     ev_mu = np.mean(ev)
 
@@ -74,24 +81,26 @@ def predict(pr, ev, pr_th=-999, ev_th = -999, plot=0):
     
 
     if plot == 1:
-        plt.plot(pr[tP], ev[tP], '.', label='tP')
         plt.plot([pr_mu * 0.9999999, pr_mu, pr_mu * 1.000000001], [0, max(ev), 0], label='pr. bnd')
         plt.plot([min(pr), max(pr)], [np.mean(ev), np.mean(ev)], label='ev. bnd')
-        plt.plot(pr[fN], ev[fN], '.', label='fN')
+        plt.plot(pr[tP], ev[tP], '.', label='tP')
         plt.plot(pr[tN], ev[tN], '.', label='tN')
         plt.plot(pr[fP], ev[fP], '.', label='fP')
+        plt.plot(pr[fN], ev[fN], '.', label='fN')
         
         plt.legend( loc='upper left', numpoints = 1 )
     return tP, tN, fP, fN
+
+
 def isOctErr(pTag, pEst):
     stDist = semitoneDist(pTag, pEst)
    
-    ind = np.where(np.round(abs(stDist) % 12) == 0)
+    ind = np.where(np.round(abs(stDist)) % 12 == 0)
     
     y = np.zeros(len(stDist))
     for i in ind[0]:
         if int(stDist[i]) != 0:
-            y[i] = int(stDist[i])
+            y[i] = np.round(stDist[i])
     return y
     
 
