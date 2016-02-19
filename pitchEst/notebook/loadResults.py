@@ -3,8 +3,8 @@ import numpy as np
 def readData(fn):
     '''
     Read data from the results directory. Formatted:
-    fields: comma se ated.
-    Data:   '\t' se eted.
+    fields: comma separated.
+    Data:   '\t' separated.
     '''
     with open(fn) as f:
         N = 0;  # linecount
@@ -203,4 +203,7 @@ ESS_sal = np.append(csE_sal, np.append(gsE_sal, np.append(msE_sal, np.append(phE
 
 
 
+# get all data from the essentia Extractor:
+from descriptors import *
+print "descriptors: " + pool.descriptorNames()
 
