@@ -104,4 +104,23 @@ def isOctErr(pTag, pEst):
     return y
     
 
+def searchPredictor(pool):
+    
+    scores = [];
+    for descr in pool.descriptorNames():
+        succes = np.zeros(4);
+        tP, tN, fP, fN = predict(descr, semitoneDist(ESS_pTag, ESS_pEst)); 
+        succes[0] = (len(tP) + len(tN)) / float(len(ESS_pTag));
  
+        tP, tN, fP, fN = predict(descr, semitoneDist(ESS_pTag, ESS_pEst), invPred=True); 
+        succes[1] = (len(tP) + len(tN)) / float(len(ESS_pTag));
+
+        tP, tN, fP, fN = predict(descr, semitoneDist(ESS_pTag, ESS_pEst), invEval=True); 
+        succes[2] = (len(tP) + len(tN)) / float(len(ESS_pTag));
+
+        tP, tN, fP, fN = predict(descr, semitoneDist(ESS_pTag, ESS_pEst), invPred=True, invEval=True); 
+        succes[3] = (len(tP) + len(tN)) / float(len(ESS_pTag));
+
+        scores.append(succes[np.where(succes == max(succes))]);
+
+    return scores;
