@@ -10,6 +10,8 @@ import pEstAssess as pa
 
 def testImprovement(pool, pFunc, M=1000, argv=''):
     names = np.append(pool['name'], '')
+    pEsts = np.append(pool['lowLevel.pitch.median'], 0)
+    pTags = np.append(pool['annotated_pitch'], 0)
     N = len(names)
     
     for m in range(M):
@@ -22,38 +24,40 @@ def testImprovement(pool, pFunc, M=1000, argv=''):
         p, c, ip, ic = pFunc((x, argv))
         
         
-        pTag = float(pool['annotated_pitch'][i])
-        pEst = float(pool['lowLevel.pitch.median'][i])
+        pTag = pTags[i]
+        pEst = pEsts[i] 
 
         ipEst = np.median(ip)
         
-        if np.median(p) != pEst:
-            print "Different estimates:\t", np.median(p), '\t', pEst, '\n'
+        if abs(np.median(p) - pEst) > 1:
+            print "Different estimates:\t", np.median(p), '\t', pEst, '\n', ipEst, '\n'
         # remove sound from possible next sounds: 
         names = np.delete(names, i)
+        pEsts = np.delete(pEsts, i)
+        pTags = np.delete(pTags, i)
         N = len(names)
 
 def noSilence_pYinFFT(argv):
     x = argv[0]
-    
+    M = 2048
+    H = 1024
+ 
     StrtStop = esstd.StartStopSilence();
-    FC = esstd.FrameCutter(frameSize=2048, hopSize=1024);
-    pYin = esstd.PitchYinFFT(frameSize=1024);
-    
+    FC = esstd.FrameCutter(frameSize=M, hopSize=H)
+    pYin = esstd.PitchYinFFT(frameSize=M);
+    win = esstd.Windowing(size=M);
+    spec =  esstd.Spectrum();
    
-    frames = [];
-    pitch = []; conf = [];
+    N = len(x)
+    frameC = int(N/M)
+    pitch = np.array([]); conf = np.array([]);
 
-    fc = FC(x);
-    while len(fc) > 0:
-        frames.append(fc)
+    for m in range(frameC):
         fc = FC(x);
-   
-    for frame in frames:
-        p, c = pYin(frame)
-        pitch.append(p);
-        conf.append(c);
-        srtStp = StrtStop(frame)
+        p, c = pYin(spec(win(fc)))
+        pitch = np.append(pitch, p);
+        conf = np.append(conf, c);
+        srtStp = StrtStop(fc)
 
     start, stop = srtStp;
 
