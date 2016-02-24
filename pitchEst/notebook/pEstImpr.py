@@ -8,7 +8,7 @@ import essentia.standard as esstd
 
 import pEstAssess as pa
 
-def testImprovement(pool, pFunc, M=100, argv=''):
+def testImprovement(pool, newFunc, oldFunc='', M=100, newArgv='', oldArgv=''):
     names = np.append(pool['name'], '')
     pEsts = np.append(pool['lowLevel.pitch.median'], 0)
     pTags = np.append(pool['annotated_pitch'], 0)
@@ -24,19 +24,23 @@ def testImprovement(pool, pFunc, M=100, argv=''):
         loader = esstd.MonoLoader(filename = './sounds/all/'+filename);
         x = loader();
         
-        ip, ic = pFunc((x, argv))
-        
-        
+        ip, ic = newFunc((x, newArgv))
+              
         pTag = pTags[i]
-        pEst = pEsts[i] 
+        if oldFunc == '':
+            pEst = pEsts[i] 
+            oconf = confs[i]
+        else:
+            pEst, oconf = oldFunc((x, oldArgv));
+            
 
         ipEst = np.median(ip)
         iconf = np.median(ic)
 
         tag[m] = pTag;
-        oEst[m] = pEst;
+        oEst[m] = np.median(pEst);
         iEst[m] = ipEst;
-        oConf[m] = confs[i];
+        oConf[m] = np.median(oconf);
         iConf[m] = iconf;
         
         filenames.append(names[i])
@@ -61,11 +65,46 @@ def incResolution_pYinFFT(argv):
     '''
         In some noisy signals a higher resulotion in the spectrogram can 
             increase the difference between the noisefloor and the harmonics.
-        if the confidence of the pitchYinFFT algorithm is lower than the treshold (argv[1])
-            the pYinFFT is recalculated with a higher resolution
-    '''
-    
-    
+    '''    
+    x = argv[0]
+
+    M = 2048
+    H = 1024
+    # instantiate algorithms:
+    pYin = esstd.PitchYinFFT(frameSize=M);
+    win = esstd.Windowing(size=M, type='blackmanharris62')
+    spec = esstd.Spectrum(size=M);
+
+    pYin_hiRes = esstd.PitchYinFFT(frameSize=M*2);
+    win_hiRes = esstd.Windowing(size=M*2, type='blackmanharris62')
+    spec_hiRes = esstd.Spectrum(size=M*2);
+
+    done = False
+   
+    x = trimAttack(x, M, H) 
+    pitch = np.array([]); conf = np.array([])    
+    pitch_hi = np.array([]); conf_hi = np.array([])    
+    for fr in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
+        FR = spec(win(fr))
+        p, c = pYin(spec(win(fr)))
+        pitch = np.append(pitch, p)
+        conf = np.append(conf, c);
+
+        fr_zp = np.array(np.append(fr, np.zeros(len(fr))), dtype='single')
+        p_hi, c_hi = pYin_hiRes(spec_hiRes(win_hiRes(fr_zp)))
+        pitch_hi = np.append(pitch_hi, p_hi)
+        conf_hi = np.append(conf_hi, c_hi)
+
+    # choose   
+    loC = np.median(conf)
+    hiC = np.median(conf_hi)
+    if loC > hiC:
+        return np.median(pitch), loC
+    else:
+        print "hi res"
+        print "low: ", loC, "\thi:", hiC
+        return np.median(pitch_hi), hiC
+ 
 
 def trimSilence(x, M=2048, H=1024):
     StrtStop = esstd.StartStopSilence();
