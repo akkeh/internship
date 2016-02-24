@@ -8,12 +8,13 @@ import essentia.standard as esstd
 
 import pEstAssess as pa
 
-def testImprovement(pool, pFunc, M=1000, argv=''):
+def testImprovement(pool, pFunc, M=100, argv=''):
     names = np.append(pool['name'], '')
     pEsts = np.append(pool['lowLevel.pitch.median'], 0)
     pTags = np.append(pool['annotated_pitch'], 0)
     N = len(names)
-    
+   
+    tag = np.zeros(M); oEst = np.zeros(M); iEst = np.zeros(M);
     for m in range(M):
         i = np.random.randint(N)
         filename = names[i]
@@ -28,14 +29,18 @@ def testImprovement(pool, pFunc, M=1000, argv=''):
         pEst = pEsts[i] 
 
         ipEst = np.median(ip)
-        
         if abs(np.median(p) - pEst) > 1:
             print "Different estimates:\t", np.median(p), '\t', pEst, '\n', ipEst, '\n'
+
+        tag[m] = pTag;
+        oEst[m] = pEst;
+        iEst[m] = ipEst
         # remove sound from possible next sounds: 
         names = np.delete(names, i)
         pEsts = np.delete(pEsts, i)
         pTags = np.delete(pTags, i)
         N = len(names)
+    return tag, oEst, iEst
 
 def noSilence_pYinFFT(argv):
     x = argv[0]
@@ -45,15 +50,14 @@ def noSilence_pYinFFT(argv):
     StrtStop = esstd.StartStopSilence();
     FC = esstd.FrameCutter(frameSize=M, hopSize=H)
     pYin = esstd.PitchYinFFT(frameSize=M);
-    win = esstd.Windowing(size=M);
+    win = esstd.Windowing(size=M, type='blackmanharris62');
     spec =  esstd.Spectrum();
    
     N = len(x)
     frameC = int(N/M)
     pitch = np.array([]); conf = np.array([]);
 
-    for m in range(frameC):
-        fc = FC(x);
+    for fc in esstd.FrameGenerator(x, frameSize = M, hopSize = H):
         p, c = pYin(spec(win(fc)))
         pitch = np.append(pitch, p);
         conf = np.append(conf, c);
