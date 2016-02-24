@@ -13,7 +13,7 @@ def testImprovement(pool, newFunc, oldFunc='', M=100, newArgv='', oldArgv=''):
     pEsts = np.append(pool['lowLevel.pitch.median'], 0)
     pTags = np.append(pool['annotated_pitch'], 0)
     confs = np.append(pool['lowLevel.pitch_instantaneous_confidence.median'], 0);
-    N = len(names)
+    N = len(names)-1
    
     tag = np.zeros(M); oEst = np.zeros(M); iEst = np.zeros(M); 
     oConf = np.zeros(M); iConf = np.zeros(M); filenames = [];
@@ -49,7 +49,7 @@ def testImprovement(pool, newFunc, oldFunc='', M=100, newArgv='', oldArgv=''):
         pEsts = np.delete(pEsts, i)
         pTags = np.delete(pTags, i)
         confs = np.delete(confs, i)
-        N = len(names)
+        N = len(names)-1
 
     oErr = abs(tag - oEst)
     iErr = abs(tag - iEst)
@@ -58,6 +58,12 @@ def testImprovement(pool, newFunc, oldFunc='', M=100, newArgv='', oldArgv=''):
     ist = pa.semitoneDist(tag, iEst)
  
     print "Improvement:\n\told mu: " + str(np.mean(abs(ost))) + " st\tnew mu: " + str(np.mean(abs(ist))) + " st"
+    print "\tOctave errors:\n\t\told: " + str(len(np.where(pa.isOctErr(tag, oEst) != 0)[0])) + "\t\t\tnew: " + str(len(np.where(pa.isOctErr(tag, iEst) != 0)[0]))
+
+    impr = "No"
+    if np.mean(abs(ost)) > np.mean(abs(ist)):
+        impr = "Yes"
+    print '\nImporoved: ' + impr;
     return filenames, tag, oEst, iEst, oConf, iConf
 
 
@@ -65,45 +71,42 @@ def incResolution_pYinFFT(argv):
     '''
         In some noisy signals a higher resulotion in the spectrogram can 
             increase the difference between the noisefloor and the harmonics.
+            -   check for oct error between pass 0 and pass N (if is oct err, choose pass 0?)
     '''    
     x = argv[0]
+    passes = argv[1]
 
     M = 2048
     H = 1024
-    # instantiate algorithms:
-    pYin = esstd.PitchYinFFT(frameSize=M);
-    win = esstd.Windowing(size=M, type='blackmanharris62')
-    spec = esstd.Spectrum(size=M);
-
-    pYin_hiRes = esstd.PitchYinFFT(frameSize=M*2);
-    win_hiRes = esstd.Windowing(size=M*2, type='blackmanharris62')
-    spec_hiRes = esstd.Spectrum(size=M*2);
-
-    done = False
-   
+    
     x = trimAttack(x, M, H) 
-    pitch = np.array([]); conf = np.array([])    
-    pitch_hi = np.array([]); conf_hi = np.array([])    
-    for fr in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
-        FR = spec(win(fr))
-        p, c = pYin(spec(win(fr)))
-        pitch = np.append(pitch, p)
-        conf = np.append(conf, c);
+    pitchs = []; confs = [];
+    
+    for pas in range(passes):
+        pYin = esstd.PitchYinFFT(frameSize=M*(2**pas))
+        win = esstd.Windowing(size=M*2**pas, type='blackmanharris62')
+        spec = esstd.Spectrum(size=M*2**pas)
 
-        fr_zp = np.array(np.append(fr, np.zeros(len(fr))), dtype='single')
-        p_hi, c_hi = pYin_hiRes(spec_hiRes(win_hiRes(fr_zp)))
-        pitch_hi = np.append(pitch_hi, p_hi)
-        conf_hi = np.append(conf_hi, c_hi)
+        ps = np.array([]); cs = np.array([]);
+        for fr in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
+            fr_zp = np.array(np.append(fr, np.zeros(len(fr) * (2**pas))), dtype='single')
+            p, c = pYin(spec(win(fr_zp)))
+            ps = np.append(ps, p);
+            cs = np.append(cs, c);
 
-    # choose   
-    loC = np.median(conf)
-    hiC = np.median(conf_hi)
-    if loC > hiC:
-        return np.median(pitch), loC
-    else:
-        print "hi res"
-        print "low: ", loC, "\thi:", hiC
-        return np.median(pitch_hi), hiC
+        pitchs.append(ps)
+        confs.append(cs)
+
+    
+    # choose
+    # calc confidences:
+    c_meds = np.array([])
+    for conf in confs:
+        c_meds = np.append(c_meds, np.median(conf))
+
+    i = np.where(c_meds == max(c_meds))[0]    
+    print "resolution: ", i, '\n\t', c_meds
+    return np.median(pitchs[i]), c_meds[i]
  
 
 def trimSilence(x, M=2048, H=1024):
@@ -177,20 +180,29 @@ def noAttack_pYinFFT(argv):
 
 def normalise(x):
     return x / float(np.max(abs(x)))
-def removeFromPool(old_pool, strt, end):
+
+def removeFromPool(old_pool, strt, end, term=''):
     pool = ess.Pool()
+    filenames = old_pool['name']
     
-    names = old_pool.descriptorNames()
-    for name in names:
-        print "Name: "+name
-        vals = old_pool[name]
-        if type(vals) != type("test"):    
+    dnames = old_pool.descriptorNames()
+    for dname in dnames:
+        print "Name: "+dname
+        vals = old_pool[dname]
+        if type(vals[0]) != type("test"):    
             for i in range(strt):
-                pool.add(name, vals[i])
+                pool.add(dname, vals[i])
+    
+            if term != '':
+                for i in range(strt, end):
+                    if filenames[i][0].find(term) == -1:
+                        pool.add(dname, vals[i])
+                
+
             for i in range(end, len(vals)):
-                pool.add(name, vals[i])
+                pool.add(dname, vals[i])
         else:
-            pool.add(name, vals);
+            pool.add(dname, vals);
     return pool
 
 def loadData():
