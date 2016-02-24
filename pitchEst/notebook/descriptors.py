@@ -145,6 +145,22 @@ def calcAll(test=0):
     esstd.YamlOutput(filename = './results/descriptors.json', format='json')(pool)
 
 
+def removeFromPool(old_pool, strt, end):
+    pool = ess.Pool()
+    
+    names = old_pool.descriptorNames()
+    for name in names:
+        print "Name: "+name
+        vals = old_pool[name]
+        if type(vals) != type("test"):    
+            for i in range(strt):
+                pool.add(name, vals[i])
+            for i in range(end, len(vals)):
+                pool.add(name, vals[i])
+        else:
+            pool.add(name, vals);
+    return pool
+
 def loadData():
     try:
         dataIn = esstd.YamlInput(filename='./results/descriptors.json')
@@ -153,4 +169,6 @@ def loadData():
         calcAll()
         pool = dataIn();
     return pool
+
+
 
