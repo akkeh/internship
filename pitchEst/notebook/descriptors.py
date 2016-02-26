@@ -8,39 +8,104 @@ import essentia.standard as esstd
 
 import pEstAssess as pa
 
-def testImprovement(pool, pFunc, M=100, argv=''):
+def descriptorTest(pool, dFunc, M=100, argv=''):
     names = np.append(pool['name'], '')
     pEsts = np.append(pool['lowLevel.pitch.median'], 0)
     pTags = np.append(pool['annotated_pitch'], 0)
-    N = len(names)
+    N = len(names)-1
    
-    tag = np.zeros(M); oEst = np.zeros(M); iEst = np.zeros(M);
+    tag = np.zeros(M); oEst = np.zeros(M); dVals = np.zeros(M);
     for m in range(M):
         i = np.random.randint(N)
         filename = names[i]
         print "file: "+filename
         loader = esstd.MonoLoader(filename = './sounds/all/'+filename);
         x = loader();
-        
-        p, c, ip, ic = pFunc((x, argv))
+        x = trimSilence(x)        
+        dVal = dFunc((x, argv))
         
         
         pTag = pTags[i]
         pEst = pEsts[i] 
 
-        ipEst = np.median(ip)
-        if abs(np.median(p) - pEst) > 1:
-            print "Different estimates:\t", np.median(p), '\t', pEst, '\n', ipEst, '\n'
-
         tag[m] = pTag;
         oEst[m] = pEst;
-        iEst[m] = ipEst
+        dVals[m] = dVal;
         # remove sound from possible next sounds: 
         names = np.delete(names, i)
         pEsts = np.delete(pEsts, i)
         pTags = np.delete(pTags, i)
-        N = len(names)
-    return tag, oEst, iEst
+        N = len(names)-1
+        with open('log.txt', 'w') as lg:
+            lg.write(filename+'\n')
+    return tag, oEst, dVals
+
+
+
+def calcDescriptor(pool, dFunc, argv=''):
+    names = np.append(pool['name'], '')
+    N = len(names)-1
+    names = np.delete(names, N)
+   
+    i = 0 
+    descr = np.array([])
+    for filename in names:
+        print "file: " + str(i) + "\t/\t" + str(N) + ":\t" + filename
+        x = ESS_load('./sounds/all/' + filename)
+        x = trimSilence(x)
+        if len(x) == 0:
+            descr = np.append(descr, 0)
+        else: 
+            descr = np.append(descr, np.median(dFunc((x, argv))))
+        
+        i += 1
+    return descr
+
+def percentageOfSignal(argv):
+    x = argv[0]
+    x_eff = trimSilence(x)
+    
+    return len(x_eff) / float(len(x)) * 100
+
+def trimSilence(x, M=2048, H=1024):
+    StrtStop = esstd.StartStopSilence();
+    start = 0; stop = len(x)
+    for frame in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
+        start, stop = StrtStop(frame)
+
+    return x[start*H:stop*H]
+
+def ESS_load(fn):
+    loader = esstd.MonoLoader(filename = fn)
+    return loader()
+
+def inharmonicity(argv):
+    x = argv[0]
+    M = 2048
+    H = 1024
+
+    if len(x) / 2 != len(x) / 2.:   
+        x = np.array(np.append(x, 0), dtype='single'); 
+    spec = esstd.Spectrum(size=M)
+    win = esstd.Windowing();
+    specP = esstd.SpectralPeaks()
+    pYin = esstd.PitchYinFFT()
+    harmP = esstd.HarmonicPeaks()
+    
+    inharm = esstd.Inharmonicity();
+    inh = np.array([])
+    i = 0
+    for frame in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
+        print '\t' + str(i) + '\t/\t' + str(len(x) / H)
+        X = spec(win(x))
+        pitch, conf = pYin(X)
+        fSP, mSP = specP(X)
+        fHP, mHP = harmP(fSP[1:], mSP[1:], pitch)
+        inh = np.append(inh, inharm(fHP, mHP))
+        i += 1
+    
+    return np.median(inh)
+        
 
 def noSilence_pYinFFT(argv):
     x = argv[0]
@@ -100,7 +165,7 @@ def improvePitch(dirname):
     return pool        
 
 def essExtractor(dirname):
-    Extr = esstd.Extractor(rhythm=False, midLevel=False);
+    Extr = esstd.Extractor(rhythm=False);
     # list files:
     filenames = [];
     pTag = [];
@@ -163,7 +228,7 @@ def removeFromPool(old_pool, strt, end):
 
 def loadData():
     try:
-        dataIn = esstd.YamlInput(filename='./results/descriptors.json')
+        dataIn = esstd.YamlInput(filename='./results/descriptors_nomods.json')
         pool = dataIn();
     except:
         calcAll()
