@@ -23,27 +23,30 @@ def testImprovement(pool, newFunc, oldFunc='', M=100, newArgv='', oldArgv=''):
         print "file: "+filename
         loader = esstd.MonoLoader(filename = './sounds/all/'+filename);
         x = loader();
-        
-        ip, ic = newFunc((x, newArgv))
-              
-        pTag = pTags[i]
-        if oldFunc == '':
-            pEst = pEsts[i] 
-            oconf = confs[i]
-        else:
-            pEst, oconf = oldFunc((x, oldArgv));
+      
+         
+        try: 
+            ip, ic = newFunc((x, newArgv))
+            pTag = pTags[i]
+            if oldFunc == '':
+                pEst = pEsts[i] 
+                oconf = confs[i]
+            else:
+                pEst, oconf = oldFunc((x, oldArgv));
+                
+
+            ipEst = np.median(ip)
+            iconf = np.median(ic)
+
+            tag[m] = pTag;
+            oEst[m] = np.median(pEst);
+            iEst[m] = ipEst;
+            oConf[m] = np.median(oconf);
+            iConf[m] = iconf;
             
-
-        ipEst = np.median(ip)
-        iconf = np.median(ic)
-
-        tag[m] = pTag;
-        oEst[m] = np.median(pEst);
-        iEst[m] = ipEst;
-        oConf[m] = np.median(oconf);
-        iConf[m] = iconf;
-        
-        filenames.append(names[i])
+            filenames.append(names[i])
+        except:
+            print "\nError loading: " + filename + '\n' 
         # remove sound from possible next sounds: 
         names = np.delete(names, i)
         pEsts = np.delete(pEsts, i)
@@ -168,8 +171,9 @@ def noAttack_pYinFFT(argv):
     win = esstd.Windowing(size=M, type='blackmanharris62')
     spec = esstd.Spectrum();
 
-    x = trimAttack(x, M, H)
     
+    x = trimAttack(x, M, H)
+
     pitch = np.array([]); conf = np.array([])
     for fr in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
         p, c = pYin(spec(win(fr)))
