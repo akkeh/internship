@@ -110,14 +110,42 @@ def incResolution_pYinFFT(argv):
     i = np.where(c_meds == max(c_meds))[0]    
     print "resolution: ", i, '\n\t', c_meds
     return np.median(pitchs[i]), c_meds[i]
- 
+
+def calcImprP(pool, pFunc, argv=''):
+    names = np.append(pool['name'], '') 
+    N = len(names)-1
+    names = np.delete(names, N)
+   
+    i = 0 
+    pitch_mu = np.array([], dtype='single'); conf_mu = np.array([], dtype='single'); 
+    pitch_med = np.array([], dtype='single'); conf_med = np.array([], dtype='single'); 
+    for filename in names:
+        print "file: " + str(i) + "\t/\t" + str(N) + ":\t" + filename
+        x = ESS_load('./sounds/all/' + filename)
+        
+        p, c = pFunc((x, argv))
+        pitch_med = np.append(pitch_med, np.median(p));
+        pitch_mu = np.append(pitch_mu, np.mean(p));
+        conf_med = np.append(conf_med, np.median(c));
+        conf_mu = np.append(conf_mu, np.mean(c));
+    
+        i += 1
+    return pitch_med, conf_med, pitch_mu, conf_mu 
+
+def ESS_load(fn):
+    loader = esstd.MonoLoader(filename = fn)
+    return loader() 
 
 def trimSilence(x, M=2048, H=1024):
     StrtStop = esstd.StartStopSilence();
+    start = 0; stop = len(x)
     for frame in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
         start, stop = StrtStop(frame)
-    
-    return x[start*H:stop*H]
+ 
+    if start-stop == 0:
+        return trimSilence(normalise(x))
+    else:
+        return x[start*H:stop*H]
  
 def noSilence_pYinFFT(argv):
     x = argv[0]
@@ -157,7 +185,7 @@ def trimAttack(x, M, H):
     start_n = np.where(np.array(env * 1000, dtype=int) > 0)[0][0] 
     
     afterAtt = start_n + (10**logattt * 44100)
-    x = x[afterAtt:]
+    x = x[int(afterAtt):]
     
     return x
 
@@ -172,7 +200,11 @@ def noAttack_pYinFFT(argv):
     spec = esstd.Spectrum();
 
     
-    x = trimAttack(x, M, H)
+    xtr = trimAttack(x, M, H)
+    if len(xtr) > 0:
+        x = xtr
+    else:
+        x = trimAttack(normalise(x), M, H)
 
     pitch = np.array([]); conf = np.array([])
     for fr in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
@@ -217,6 +249,5 @@ def loadData():
         calcAll()
         pool = dataIn();
     return pool
-
 
 

@@ -104,23 +104,58 @@ def isOctErr(pTag, pEst):
     return y
     
 
-def searchPredictor(pool):
+def searchPredictor(pool, pestimation):
     
+    pTag = pool['annotated_pitch']
+    pEst = pool[pestimation]
+    st = semitoneDist(pTag, pEst)
+    N = len(st)
     scores = [];
-    for descr in pool.descriptorNames():
-        succes = np.zeros(4);
-        tP, tN, fP, fN = predict(descr, semitoneDist(ESS_pTag, ESS_pEst)); 
-        succes[0] = (len(tP) + len(tN)) / float(len(ESS_pTag));
- 
-        tP, tN, fP, fN = predict(descr, semitoneDist(ESS_pTag, ESS_pEst), invPred=True); 
-        succes[1] = (len(tP) + len(tN)) / float(len(ESS_pTag));
+    for descrname in pool.descriptorNames():
+        print descrname
+        descr = pool[descrname]
+        if type(descr[0]) != list:
+            if len(descr.shape) == 1:
+                succes = np.zeros(4);
+                tP, tN, fP, fN = predict(descr, st)
+                succes[0] = (len(tP) + len(tN)) / float(N);
+         
+                tP, tN, fP, fN = predict(descr, st, invPred=True); 
+                succes[1] = (len(tP) + len(tN)) / float(N);
 
-        tP, tN, fP, fN = predict(descr, semitoneDist(ESS_pTag, ESS_pEst), invEval=True); 
-        succes[2] = (len(tP) + len(tN)) / float(len(ESS_pTag));
+                tP, tN, fP, fN = predict(descr, st, invEval=True); 
+                succes[2] = (len(tP) + len(tN)) / float(N);
 
-        tP, tN, fP, fN = predict(descr, semitoneDist(ESS_pTag, ESS_pEst), invPred=True, invEval=True); 
-        succes[3] = (len(tP) + len(tN)) / float(len(ESS_pTag));
+                tP, tN, fP, fN = predict(descr, st, invPred=True, invEval=True); 
+                succes[3] = (len(tP) + len(tN)) / float(N);
 
-        scores.append(succes[np.where(succes == max(succes))]);
+                scores.append(succes[np.where(succes == max(succes))[0][0]]);
 
     return scores;
+
+# regression:
+def linreg(pool, pestimation='lowLevel.pitch.median'):
+    pTag = pool['annotated_pitch']
+    pEst = pool[pestimation]
+    
+    st = abs(semitoneDist(pTag, pEst))
+    
+    names = pool.descriptorNames()
+    errors = np.array([])
+    coeffa = np.array([])
+    coeffb = np.array([])
+
+    for dname in names:
+        descr = pool[dname]
+        if type(descr[0]) != list:
+            if len(descr.shape) == 1:   # $TODO: barkbands
+                x = np.array([descr, np.ones(len(descr))])
+                w = np.linalg.lstsq(x.T, st)
+                a = w[0][0]
+                b = w[0][1]
+                
+                errors = np.append(errors, np.sum(((a*x + b)-st)**2))
+                coeffa = np.append(coeffa, a)
+                coeffb = np.append(coeffb, b)
+    return errors, coeffa, coeffb 
+

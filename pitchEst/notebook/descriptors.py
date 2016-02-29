@@ -40,8 +40,6 @@ def descriptorTest(pool, dFunc, M=100, argv=''):
             lg.write(filename+'\n')
     return tag, oEst, dVals
 
-
-
 def calcDescriptor(pool, dFunc, argv=''):
     names = np.append(pool['name'], '')
     N = len(names)-1
@@ -79,6 +77,11 @@ def ESS_load(fn):
     loader = esstd.MonoLoader(filename = fn)
     return loader()
 
+def addToPool(pool, name, x):
+    for val in x:
+        pool.add(name, val)
+    return pool
+
 def inharmonicity(argv):
     x = argv[0]
     M = 2048
@@ -106,64 +109,6 @@ def inharmonicity(argv):
     
     return np.median(inh)
         
-
-def noSilence_pYinFFT(argv):
-    x = argv[0]
-    M = 2048
-    H = 1024
- 
-    StrtStop = esstd.StartStopSilence();
-    FC = esstd.FrameCutter(frameSize=M, hopSize=H)
-    pYin = esstd.PitchYinFFT(frameSize=M);
-    win = esstd.Windowing(size=M, type='blackmanharris62');
-    spec =  esstd.Spectrum();
-   
-    N = len(x)
-    frameC = int(N/M)
-    pitch = np.array([]); conf = np.array([]);
-
-    for fc in esstd.FrameGenerator(x, frameSize = M, hopSize = H):
-        p, c = pYin(spec(win(fc)))
-        pitch = np.append(pitch, p);
-        conf = np.append(conf, c);
-        srtStp = StrtStop(fc)
-
-    start, stop = srtStp;
-
-    ns_pitch = pitch[start:stop];
-    ns_conf = conf[start:stop]
-    return pitch, conf, ns_pitch, ns_conf
-
-def improvePitch(dirname):
-    # list files:
-    filenames = [];
-    print "listing files"
-    with open('./results/' + dirname.split('/')[-2] + '_ESS.txt') as f:
-        f.readline()    # skip first line
-        line = f.readline();
-        while line != '':
-            filenames.append(line.split('\t')[0].split('/')[-1])
-            line = f.readline();
-    pool = ess.Pool()
-
-    for filename in filenames:
-        print "file: " + filename
-        loader = esstd.MonoLoader(filename = dirname+filename);
-        x = loader();
-        return x
-        t_pool = ess.Pool()
-        pitch, conf = noSilence_pYinFFT(x)
-        t_pool.add('name', filename);
-        t_pool.add('noSilence.pitch.mean', np.mean(pitch));
-        t_pool.add('noSilence.pitch.median', np.median(pitch));
-        t_pool.add('noSilence.conf.mean', np.mean(conf));
-        t_pool.add('noSilence.conf.median', np.median(conf));
-        
-        for dName in t_pool.descriptorNames():
-            pool.add(dName, t_pool[dName])
-        
-    return pool        
-
 def essExtractor(dirname):
     Extr = esstd.Extractor(rhythm=False);
     # list files:
@@ -194,6 +139,7 @@ def essExtractor(dirname):
             pool.add(dName, aExtr[dName])   
         n += 1
     return pool
+
 
 def calcAll(test=0):
     pool = False
