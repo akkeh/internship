@@ -128,22 +128,25 @@ def essExtractor(dirname):
     n = 0
     for filename in filenames:
         print "file: " + str(n+1) + " of " + str(N)
-        # load the audio:
-        loader = esstd.MonoLoader(filename = dirname+filename)
-        x = loader();
-        extr = Extr(x);
-        extr.add('name', filename)
-        extr.set('annotated_pitch', pTag[n])
-        aExtr = esstd.PoolAggregator(defaultStats = ['mean', 'median' ])(extr)
-        for dName in aExtr.descriptorNames():
-            pool.add(dName, aExtr[dName])   
+        try:
+            # load the audio:
+            loader = esstd.MonoLoader(filename = dirname+filename)
+            x = loader();
+            extr = Extr(x);
+            extr.add('name', filename)
+            extr.set('annotated.pitch', pTag[n])
+            aExtr = esstd.PoolAggregator(defaultStats = ['mean', 'median', 'min', 'max', 'var' ])(extr)
+            for dName in aExtr.descriptorNames():
+                pool.add(dName, aExtr[dName])   
+        except:
+            print "file: " + filename + " not found!"
         n += 1
     return pool
 
 
 def calcAll(test=0):
     pool = False
-    dirs = [ 'carlos/', 'good-sounds/', 'modularsamples/', 'philharmonia/', 'iowa/' ] 
+    dirs = [ 'carlos/', 'good-sounds/', 'philharmonia/', 'iowa/' ] 
     if test != 0:
         dirs = ['carlos/']
     for dirname in dirs:
