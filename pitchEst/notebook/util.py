@@ -7,4 +7,7 @@ def normalise(x):
         return x
 
 def freq2midi(freq, fref=440.):
-    return np.trunc(np.log2(freq / float(fref)) * 12 + 49)
+    return np.log2(freq / float(fref)) * 12 + 49
+
+def midi2freq(midi, fref=440.):
+    return 2**((midi - 49) / 12.) * fref
