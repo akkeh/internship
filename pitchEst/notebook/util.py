@@ -1,8 +1,10 @@
 import numpy as np
 
 def normalise(x):
+    if type(x) == list:
+        x = np.array(x)
     if np.max(abs(x)) > 0:
-        return x / np.max(abs(x))
+        return x / float(np.max(abs(x)))
     else:
         return x
 
