@@ -196,3 +196,48 @@ def normalisePool(pool):
 def deleteDescr(pool, dname):
     pool.remove(dname)
     return pool
+
+def getOctErrIndexes(pTag, pEst):
+    midiTag = ut.freq2midi(pTag); midiEst = ut.freq2midi(pEst);
+    st = midiTag - midiEst
+    i_err = np.where(abs(st) > 1)[0];
+    x = np.log2(pEst[i_err] / pTag[i_err]);
+
+    frqs, lbounds = np.histogram(x, range=(-max(-x), max(-x)), bins=16*np.round(max(-x)) + 1); bw = lbounds[3]-lbounds[2];
+
+    # octave errors:
+    i_octErrEdges = list();
+    t_octErrBins = list();
+    for i in range(1, 9): 
+        val = np.log2(i);
+        i_sup = 0; i_sub = 0 
+        for lbound in lbounds:
+            if lbound < -val:
+                i_sub += 1
+            if lbound < val:
+                i_sup += 1
+        i_octErrEdges.append((lbounds[i_sub-1], lbounds[i_sub]))
+        i_octErrEdges.append((lbounds[i_sup-1], lbounds[i_sup]))
+        t_octErrBins.append(val)
+        t_octErrBins.append(val)
+        
+    i_octErr = list();
+    t_octErr = list();
+    k = 0 
+    for binEdges in i_octErrEdges:
+        i = 0;
+        for val in x:
+            if val > binEdges[0] and val < binEdges[1]:
+                i_octErr.append(i)
+                mul = 1 
+                if pEst[i] < pTag[i]:
+                    mul = -1
+                t_octErr.append((mul*t_octErrBins[k]))
+            i+=1
+        k += 1
+    i_octErr = i_err[i_octErr];
+
+
+    st_err = st[i_err];
+    return i_octErr, t_octErr
+
