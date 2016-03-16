@@ -14,8 +14,6 @@ def freq2midi(freq, fref=440.):
 def midi2freq(midi, fref=440.):
     return 2**((np.float64(midi) - 49) / 12.) * fref
 
-
-
 def remove_overlap(a, b):
     '''
         returns a without overlapping elements from b
