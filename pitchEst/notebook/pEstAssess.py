@@ -53,6 +53,29 @@ def semitoneDist(pTag, pEst):
     return y
    
 
+def predictContainer(pr, ev, ev_th=1, res=100.):
+    pr = abs(pr)
+    ev = abs(ev)
+    
+    best_score = 0
+    best_th = 0
+    best_mode = 'normal'
+    for pr_th in np.arange(min(pr), max(pr), (max(pr)-min(pr)) / float(res)):
+        tP, tN, fP, fN = predict(pr, ev, pr_th=pr_th, ev_th=ev_th, invPred=False)
+        score = len(tP) + len(tN)
+        if score > best_score:
+            best_score = score
+            best_th = pr_th
+            best_mode = 'normal'
+        tP, tN, fP, fN = predict(pr, ev, pr_th=-pr_th, ev_th=ev_th, invPred=True)
+        score = len(tP) + len(tN)
+        if score > best_score:
+            best_score = score
+            best_th = pr_th
+            best_mode = 'inverse'
+    
+    return best_score, best_mode, best_th
+
 def predict(pr, ev, pr_th=-999, ev_th = -999, plot=0, invEval=False, invPred=False):
     pr = abs(pr)    # predictor
     ev = abs(ev)    # evaluator

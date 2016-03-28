@@ -9,6 +9,91 @@ import essentia.standard as esstd
 import pEstAssess as pa
 import util as ut
 
+def calcImpr(pool):
+    imprPool = ess.Pool()
+    imprPool.set('annotated.pitch', pool['annotated.pitch'])
+    imprPool.set('normal.pitch', pool['lowLevel.pitch.median'])
+    imprPool.set('normal.conf', pool['lowLevel.pitch_instantaneous_confidence.median'])
+
+    print "No Silent frames"
+    noSilPool = silenceImprovements(pool)        
+    for dname in noSilPool.descriptorNames():
+        print dname
+        imprPool.set(dname, noSilPool[dname])
+
+    print "Confidence"
+    confPool = confImpr(pool)    
+    for dname in confPool.descriptorNames():
+        imprPool.set(dname, confPool[dname])
+
+    esstd.YamlOutput(filename = './results/improvements.json', format='json')(imprPool)    
+    return imprPool 
+     
+
+def fykeImprovements(pool):
+    print "ha"
+
+def fykePitch(x, M=2048, H=1024, passes=10):
+    # init algorithms:
+    win = esstd.Windowing(type='blackmanharris62', zeroPadding=0);
+    spec = esstd.Spectrum(); 
+    pYin = esstd.PitchYinFFT(frameSize=M);
+
+    
+    pitches = list(); confs = list()
+    for frame in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
+        p, c = pYin(spec(win(frame)))
+    
+        pitches.append(p)
+        confs.append(c)
+
+    freqs, lbounds = np.histogram(pitches, range=(min(pitches), max(pitches)), bins=np.round(max(pitches)-min(pitches)));
+    
+    
+    return pitches, confs
+    
+# ------------------------------------------------------------------|
+def confImpr(pool):
+    pool2 = ess.Pool()
+    M = 2048; H = 1024;
+    pitch_hc = list()
+    names = pool['name']
+    # init algorithms:
+    win = esstd.Windowing(type='blackmanharris62', zeroPadding=0);
+    spec = esstd.Spectrum(); 
+    pYin = esstd.PitchYinFFT(frameSize=M);
+
+    for name in names:
+        loader = esstd.MonoLoader(filename='./sounds/all/'+name[0])
+        x = ut.trimSilence(loader())
+
+        pitches = list(); confs = list()
+        for frame in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
+            p, c = pYin(spec(win(frame)))
+        
+            pitches.append(p)
+            confs.append(c)
+        
+        pitches = np.array(pitches)
+        confs = np.array(confs)
+        
+        #pitch_hc.append(np.median(p[np.where(np.array(c) > 0.62)]))
+
+        pool2.add('highconf.pitch', np.median(pitches[np.array(np.where(np.array(confs) > 0.62))]))
+        pool2.add('highconf.conf', np.median(confs[np.array(np.where(np.array(confs) > 0.62))]))
+    return pool2
+        
+
+    freqs, lbounds = np.histogram(pitches, range=(min(pitches), max(pitches)), bins=np.round(max(pitches)-min(pitches)));
+    
+       
+
+
+
+# ------------------------------------------------------------------|
+
+
+
 def silenceImprovements(pool):
     names = np.append(pool['name'], '')
     N = len(names) - 1;
@@ -36,6 +121,7 @@ def silenceImprovements(pool):
 
     # no Silence:
     i = 0
+    lens = list(); l_noSil = list(); l_noAtt = list(); l_noSilnoAtt = list()
     for name in names:
         StrtStop = esstd.StartStopSilence();
 
@@ -51,6 +137,7 @@ def silenceImprovements(pool):
             startFrame, stopFrame = StrtStop(frame)
 
         if stopFrame - startFrame <= 0:
+            startFrame = 0; stopFrame = len(x)
             for frame in esstd.FrameGenerator(ut.normalise(x), frameSize=M, hopSize=H):
                 p, c = pYin(spec(win(frame)))
                 pitch.append(p); conf.append(c)
@@ -59,24 +146,59 @@ def silenceImprovements(pool):
         pEst_noSil[i] = np.median(pitch[startFrame:stopFrame])
         conf_noSil[i] = np.median(conf[startFrame:stopFrame])
 
-        
+        lens.append(len(x))
+        l_noSil.append(stopFrame-startFrame)
+
         x_noAtt = ut.trimAttack(x, M=M, H=H)
         startFrame = 0; stopFrame = len(x_noAtt)
         for frame in esstd.FrameGenerator(x_noAtt, frameSize=M, hopSize=H):
             p, c = pYin(spec(win(frame)))
             pitch.append(p); conf.append(c)
             startFrame, stopFrame = StrtStop(frame)
-
+        
+        l_noAtt.append(len(x_noAtt))
         pEst_noAtt[i] = np.median(pitch)
         conf_noAtt[i] = np.median(conf)
 
+        l_noSilnoAtt.append(stopFrame-startFrame)
         pEst_noSilnoAtt[i] = np.median(pitch[startFrame:stopFrame])
         conf_noSilnoAtt[i] = np.median(conf[startFrame:stopFrame])
 
         i+=1
-       
-    return pTag, (pEst, conf), (pEst_noSil, conf_noSil), (pEst_noAtt, conf_noAtt), (pEst_noSilnoAtt, conf_noSilnoAtt)
 
+    lst = pTag
+    print "Tag mean: ", np.mean(lst), "std: ", np.std(lst), "med: ", np.median(lst)       
+
+    lst = pEst
+    print "Tag mean: ", np.mean(lst), "std: ", np.std(lst), "med: ", np.median(lst)       
+
+    lst = pEst_noSil
+    print "Tag mean: ", np.mean(lst), "std: ", np.std(lst), "med: ", np.median(lst)       
+
+    lst = pEst_noAtt
+    print "Tag mean: ", np.mean(lst), "std: ", np.std(lst), "med: ", np.median(lst)       
+
+    lst = pEst_noSilnoAtt
+    print "Tag mean: ", np.mean(lst), "std: ", np.std(lst), "med: ", np.median(lst)       
+
+    pool2 = ess.Pool()
+    pool2.set('silence.nosilentframes.pitch', np.array(pEst_noSil, dtype='single'))
+    pool2.set('silence.nosilentframes.conf', np.array(conf_noSil, dtype='single'))
+
+    pool2.set('silence.noattack.pitch', np.array(pEst_noAtt, dtype='single'))
+    pool2.set('silence.noattack.conf', np.array(conf_noAtt, dtype='single'))
+    
+    pool2.set('silence.nosilencenoattack.pitch', np.array(pEst_noSilnoAtt, dtype='single'))
+    pool2.set('silence.nosilencenoattack.conf', np.array(conf_noSilnoAtt, dtype='single'))
+
+    return pool2
+
+def printImpr(res):
+    
+    print "mean: ", np.mean(res[0]), "\tstd: ", np.std(res[0]), "\tmed: ", np.median(res[0])
+    for re in res[1:]:
+        for r in re:
+            print "mean: ", np.mean(r), "\tstd: ", np.std(r), "\tmed: ", np.median(r)
 
 def descriptorTest(pool, dFunc, M=100, argv=''):
     names = np.append(pool['name'], '')

@@ -48,11 +48,13 @@ def trimAttack(x, M=2048, H=1024):
     Env = esstd.Envelope();
     LogAttT = esstd.LogAttackTime();
 
+    '''
     x_trimmed = trimSilence(x, M, H)
     if len(x_trimmed) / float(len(x)) * 100 < 1:
         x = trimSilence(normalise(x), M, H)
     else:
         x = x_trimmed
+    '''
     env = Env(x)
     logattt = LogAttT(env)
     start_n = np.where(np.array(env * 1000, dtype=int) > 0)[0][0]

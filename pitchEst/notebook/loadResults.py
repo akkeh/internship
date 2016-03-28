@@ -68,4 +68,6 @@ except:
 
 frsPool = sortPool(locPool, frsPool)
 
+loadImpr = esstd.YamlInput(filename='./results/improvements.json')
+imprPool = loadImpr();
 print "done"
