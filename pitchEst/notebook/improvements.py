@@ -79,8 +79,23 @@ def confImpr(pool):
         
         #pitch_hc.append(np.median(p[np.where(np.array(c) > 0.62)]))
 
-        pool2.add('highconf.pitch', np.median(pitches[np.array(np.where(np.array(confs) > 0.62))]))
-        pool2.add('highconf.conf', np.median(confs[np.array(np.where(np.array(confs) > 0.62))]))
+        th = 0.62
+        indxs = np.array(np.where(np.array(confs) > th))
+
+        i=0
+        while len(indxs[0]) < 4 and i < 10:
+            indxs = np.array(np.where(np.array(confs) > th))
+            th = th * 0.9
+            i+=1
+        if len(indxs[0]) < 4:
+            indxs = np.array(np.where(np.array(confs) > np.mean(confs)))
+
+        pitch = np.median(pitches[indxs])
+        conf = np.median(confs[indxs])
+
+        pool2.add('highconf.pitch', pitch);
+        pool2.add('highconf.conf', conf);
+
     return pool2
         
 
