@@ -27,32 +27,68 @@ def calcImpr(pool):
     for dname in confPool.descriptorNames():
         imprPool.set(dname, confPool[dname])
 
+    print "Final..."
+    iPool = imprPitchYinFFT_container(pool)    
+    for dname in iPool.descriptorNames():
+        imprPool.set(dname, iPool[dname])
+
     esstd.YamlOutput(filename = './results/improvements.json', format='json')(imprPool)    
     return imprPool 
      
+def imprPitchYinFFT_container(pool):
+    pool2 = ess.Pool()    
+    names = pool['name']
+    for name in names:
+        loader = esstd.MonoLoader(filename='./sounds/all/'+name[0]);
+        p, c, l = imprPitchYinFFT(loader())
+        pool2.add('improved.yin.pitch', p)
+        pool2.add('improved.yin.conf', c)
+        pool2.add('improved.yin.len', l)
 
-def fykeImprovements(pool):
-    print "ha"
+    return pool2
 
-def fykePitch(x, M=2048, H=1024, passes=10):
-    # init algorithms:
+def imprPitchYinFFT(x, M=2048, H=1024):
     win = esstd.Windowing(type='blackmanharris62', zeroPadding=0);
     spec = esstd.Spectrum(); 
     pYin = esstd.PitchYinFFT(frameSize=M);
 
-    
-    pitches = list(); confs = list()
+    StrtStop = esstd.StartStopSilence();
+    pitches = np.array([]); confs = np.array([])
     for frame in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
         p, c = pYin(spec(win(frame)))
-    
-        pitches.append(p)
-        confs.append(c)
+        
+        pitches = np.append(pitches, p)
+        confs = np.append(confs, c)
+        startFrame, stopFrame = StrtStop(frame)
 
-    freqs, lbounds = np.histogram(pitches, range=(min(pitches), max(pitches)), bins=np.round(max(pitches)-min(pitches)));
+    if stopFrame - startFrame <= 0:
+        startFrame = 0; stopFrame = len(x)
+        StrtStop = esstd.StartStopSilence();
+        for frame in esstd.FrameGenerator(ut.normalise(x), frameSize=M, hopSize=H):
+            startFrame, stopFrame = StrtStop(frame)
+    if stopFrame - startFrame <= 0:
+        startFrame = 0; stopFrame = len(x)
+    pitches = pitches[startFrame:stopFrame]
+    confs = confs[startFrame:stopFrame]
+    # find high confidence frames:
+    th = 0.62
+    indxs = np.where(confs > 0.62)[0]
+    i=0
+    while len(indxs) < 4 and i < 10:
+        indxs = np.where(confs > th)[0]
+        th = th * 0.9;
+        i+=1
     
-    
-    return pitches, confs
-    
+    if len(indxs) == 0:
+        pitch = np.median(pitches)
+        conf = np.median(confs)
+        l = len(pitches)
+    else:
+        pitch = np.median(pitches[indxs])
+        conf = np.median(confs[indxs])
+        l = len(indxs)
+    return pitch, conf, l
+
 # ------------------------------------------------------------------|
 def confImpr(pool):
     pool2 = ess.Pool()
@@ -66,7 +102,7 @@ def confImpr(pool):
 
     for name in names:
         loader = esstd.MonoLoader(filename='./sounds/all/'+name[0])
-        x = ut.trimSilence(loader())
+        x = loader()
 
         pitches = list(); confs = list()
         for frame in esstd.FrameGenerator(x, frameSize=M, hopSize=H):
@@ -96,8 +132,8 @@ def confImpr(pool):
 
         pool2.add('highconf.pitch', pitch);
         pool2.add('highconf.conf', conf);
-        pool2.add('highconf.var', np.var(pitches[indxs])
-
+        pool2.add('highconf.var', np.var(pitches[indxs]))
+        pool2.add('highconf.len', len(indxs[0]))
     return pool2
         
 
@@ -125,6 +161,10 @@ def silenceImprovements(pool):
     conf_noAtt = np.zeros(N)
     conf_noSilnoAtt = np.zeros(N)
 
+    pVar_noSil = np.zeros(N)
+    pVar_noAtt = np.zeros(N)
+    pVar_noSilnoAtt = np.zeros(N)
+
     # initiate algorithms:
     M = 2048; H = 1024
     win =  esstd.Windowing(type='blackmanharris62', zeroPadding=0)
@@ -151,6 +191,7 @@ def silenceImprovements(pool):
             startFrame, stopFrame = StrtStop(frame)
 
         if stopFrame - startFrame <= 0:
+            StrtStop = esstd.StartStopSilence();
             startFrame = 0; stopFrame = len(x)
             for frame in esstd.FrameGenerator(ut.normalise(x), frameSize=M, hopSize=H):
                 p, c = pYin(spec(win(frame)))
@@ -202,6 +243,7 @@ def silenceImprovements(pool):
     pool2.set('silence.nosilentframes.pitch', np.array(pEst_noSil, dtype='single'))
     pool2.set('silence.nosilentframes.conf', np.array(conf_noSil, dtype='single'))
     pool2.set('silence.nosilentframes.var', np.array(pVar_noSil, dtype='single'))
+    pool2.set('silence.nosilentframes.len', np.array(l_noSil, dtype='single'))
 
     pool2.set('silence.noattack.pitch', np.array(pEst_noAtt, dtype='single'))
     pool2.set('silence.noattack.conf', np.array(conf_noAtt, dtype='single'))
@@ -211,6 +253,14 @@ def silenceImprovements(pool):
     pool2.set('silence.nosilencenoattack.conf', np.array(conf_noSilnoAtt, dtype='single'))
     pool2.set('silence.nosilencenoattack.var', np.array(pVar_noSilnoAtt, dtype='single'))
 
+    return pool2
+
+def getLens(pool):
+    pool2 = ess.Pool()
+    for name in pool['name']:
+        loader = esstd.MonoLoader(filename='./sounds/all/'+name[0])
+        x = loader()
+        pool2.add('normal.len', len(x) / 1024)
     return pool2
 
 def printImpr(res):
