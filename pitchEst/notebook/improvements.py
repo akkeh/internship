@@ -14,6 +14,7 @@ def calcImpr(pool):
     imprPool.set('annotated.pitch', pool['annotated.pitch'])
     imprPool.set('normal.pitch', pool['lowLevel.pitch.median'])
     imprPool.set('normal.conf', pool['lowLevel.pitch_instantaneous_confidence.median'])
+    imprPool.set('normal.var', pool['lowLevel.pitch.var'])
 
     print "No Silent frames"
     noSilPool = silenceImprovements(pool)        
@@ -95,6 +96,7 @@ def confImpr(pool):
 
         pool2.add('highconf.pitch', pitch);
         pool2.add('highconf.conf', conf);
+        pool2.add('highconf.var', np.var(pitches[indxs])
 
     return pool2
         
@@ -106,9 +108,6 @@ def confImpr(pool):
 
 
 # ------------------------------------------------------------------|
-
-
-
 def silenceImprovements(pool):
     names = np.append(pool['name'], '')
     N = len(names) - 1;
@@ -160,6 +159,7 @@ def silenceImprovements(pool):
             
         pEst_noSil[i] = np.median(pitch[startFrame:stopFrame])
         conf_noSil[i] = np.median(conf[startFrame:stopFrame])
+        pVar_noSil[i] = np.var(pitch[startFrame:stopFrame])
 
         lens.append(len(x))
         l_noSil.append(stopFrame-startFrame)
@@ -174,10 +174,12 @@ def silenceImprovements(pool):
         l_noAtt.append(len(x_noAtt))
         pEst_noAtt[i] = np.median(pitch)
         conf_noAtt[i] = np.median(conf)
+        pVar_noAtt[i] = np.var(pitch)
 
         l_noSilnoAtt.append(stopFrame-startFrame)
         pEst_noSilnoAtt[i] = np.median(pitch[startFrame:stopFrame])
         conf_noSilnoAtt[i] = np.median(conf[startFrame:stopFrame])
+        pVar_noSilnoAtt[i] = np.var(pitch[startFrame:stopFrame])
 
         i+=1
 
@@ -199,12 +201,15 @@ def silenceImprovements(pool):
     pool2 = ess.Pool()
     pool2.set('silence.nosilentframes.pitch', np.array(pEst_noSil, dtype='single'))
     pool2.set('silence.nosilentframes.conf', np.array(conf_noSil, dtype='single'))
+    pool2.set('silence.nosilentframes.var', np.array(pVar_noSil, dtype='single'))
 
     pool2.set('silence.noattack.pitch', np.array(pEst_noAtt, dtype='single'))
     pool2.set('silence.noattack.conf', np.array(conf_noAtt, dtype='single'))
+    pool2.set('silence.noattack.var', np.array(pVar_noAtt, dtype='single'))
     
     pool2.set('silence.nosilencenoattack.pitch', np.array(pEst_noSilnoAtt, dtype='single'))
     pool2.set('silence.nosilencenoattack.conf', np.array(conf_noSilnoAtt, dtype='single'))
+    pool2.set('silence.nosilencenoattack.var', np.array(pVar_noSilnoAtt, dtype='single'))
 
     return pool2
 
