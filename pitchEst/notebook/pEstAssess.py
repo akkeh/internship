@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+import essentia as ess
+import essentia.standard as esstd
+
 import util as ut
 
 def ERB(fc):
@@ -230,3 +233,35 @@ def getOctErrIndexes(pTag, pEst):
     st_err = st[i_err];
     return i_octErr, t_octErr
 
+
+def correctFrames_container(pool):
+    pTag = pool['annotated.pitch']
+    names = pool['name']
+
+    pool2 = ess.Pool()
+    i=0
+    for name in names:
+        loader = esstd.MonoLoader(filename='./sounds/all/'+name[0])
+        results = correctFrames(loader(), pTag[i])
+        for res in results:
+            pool2.add(res[0], res[1])
+        i+=1
+    return pool2
+
+def correctFrames(x, pTag, M=2048, H=1024):
+    win = esstd.Windowing(type='blackmanharris62', zeroPadding=0);
+    spec = esstd.Spectrum(); 
+    pYin = esstd.PitchYinFFT(frameSize=M);
+
+    mTag = ut.freq2midi(pTag)
+    c_corr = np.array([]); c_wrong = np.array([])
+    for frame in esstd.FrameGenerator(ut.normalise(x), frameSize=M, hopSize=H):
+        p, c = pYin(spec(win(frame)))
+        
+        m = ut.freq2midi(p)
+        if abs(m - mTag) >= 1:
+            c_wrong = np.append(c_wrong, c)
+        else:
+            c_corr = np.append(c_corr, c)
+    return ('confidence.correct', np.median(c_corr)), ('confidence.wrong', np.median(c_wrong))
+        
