@@ -2,7 +2,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 
-\title{Assessment of Pitch Estimation Algorithm for Single-note Instrument Sound Recordings}
+\title{Assessment of Pitch Estimation Algorithm pitchYinFFT for Single-note Instrument Sounds}
 \author{Akke Houben}
 \date{2016}
 
@@ -128,13 +128,15 @@ Several measurements will be investigated for their usefullness as predictors fo
 \begin{enumerate}
     \item Firstly the difference in the mean of the values of the measurements between the correctly and incorrectly estimated sounds, the bigger this difference the more usefull the measurement. 
     \item Secondly the descriptors are tested for their abilities to correctly identify what sounds will be correctly estimated. The descriptors which acceptations and rejections coincide mostly with respectively the correctly and the incorrectly estimated sounds (highest percetage of true positives and true negatives) are most potent as predictors. 
-    \item Thirdly a line is fitted trough the datapoints (predictor value, semitone distance), afterwards the distance between the fitted line and each datapoint is taken as an prediction error measurement. A low prediction error means a better predictor quality.
     \item Lastly the 'Select Attributes' functionality from Weka (http://www.cs.waikato.ac.nz/ml/weka/) using as Attribute Evaluator the 'InfoGainAttributeEval' and as Search Method the 'Ranker' is used.
 \end{enumerate}
 When considering predictors for octave errors, octave errors are considered 'incorrect estimations' and all estimates which are no octave errors are considered 'correct estimations'
 
 \subsubsection{Pitch estimation related}
 The pitch estimator used returns a confidence measurement, this should be a measure for the quality of the estimation. Besides the confidence measure the variance of the pitch estimation for each sound could be a prediction for the quality of the estimation. The pitch estimation is combined with a pitch salience measurement. Salience is an indication for howmuch tonal information the signal contains and as the pitch estimator is designed for tonal sound this could also be a predictor for the size of the estimation errors.
+
+\subsubsection{Descriptors}
+Due to the characteristics of the algorithms used in the pitchYinFFT pitch estimation some type of sounds could be more difficult to be correctly estimated than others. In this section some descriptor values\footnote{Find attached a list of the calculated descriptors} are calculated for the sounds used in the pitch estimation. Correlations are investigated between the values obtained for the descriptors and the errors of the pitch estimation. 
 
 \subsection{Results}
 \subsubsection{Pitch estimation related}
@@ -147,7 +149,7 @@ The pitch estimator used returns a confidence measurement, this should be a meas
 In figure \ref{fig:penr_cvs} the precision and recall of the confidence, variance and salience can be seen. For each value of the predictor (confidence, variance or salience) an accuracy is calculated (ratio of correctly included versus total amount of accepted sounds). The variance is transformed to a standard deviation value by taking the square root of the variance, becuase this provided a more informative predictor.
 \begin{table}[h]
     \begin{center}
-        \begin{tabular}{ | l | c | c | c |}
+        \begin{tabular}{ | l | l | c | c |}
             \hline
                         &           &   mean:       &   std:        \\ \hline
             Confidence  &           &               &               \\  \hline
@@ -201,26 +203,140 @@ Table \ref{table:pred_cvs} shows the performance of confidence, variance and sal
 \end{table}
 Lastly table \ref{table:weka_cvs} lists the ranking of the confidence, variance and salience found by WEKA, The correct results were sampled randomly \footnote{Find attached a document with a comparison of the sample and the total dataset}.
 
-\subsubsubsection{Octave errors}
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | l | c | c |}
+            \hline
+                        &                   &   mean:       &   std:        \\ \hline
+            Confidence  &                   &               &               \\  \hline
+                        &Correct:           &   $0.91424$   &   $0.13082$   \\  \hline
+                        &Octave errors:     &   $0.65720$   &   $0.24652$   \\  \hline
+                        &Non-octave errors: &   $0.50202$   &   $0.24590$   \\  \hline
+            \hline
+            Variance   &                    &               &               \\  \hline
+                        &Correct:           &   $0.61659$   &   $0.13330$   \\  \hline
+                        &Octave errors:     &   $0.61698$   &   $0.14706$   \\  \hline
+                        &Non-octave errors: &   $0.63779$   &   $0.11131$   \\  \hline
  
+           Salience   &                     &               &               \\  \hline
+                        &Correct:           &   $0.46339$   &   $0.19306$   \\  \hline
+                        &Octave errors:     &   $0.46938$   &   $0.46938$   \\  \hline
+                        &Non-octave errors: &   $0.32663$   &   $0.24057$   \\  \hline
+        \end{tabular}
+        \caption{Difference in mean and std (octave errors)}
+        \label{table:msdiffOct_cvs}
+    \end{center}
+\end{table}
+In table \ref{table:msdiffOct_cvs} the difference in mean and standard deviationvalues between the correct, the incorrect attributable to octave errors and non-octave error incorrect estimations are given. 
+
+\subsubsection{Descriptors}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{img/pred_descr.png}
+    \caption{Difference in mean values}
+    \label{fig:pred_desc}
+\end{figure}
+Figure \ref{fig:pred_desc} shows the twenty descriptors with the biggest difference in mean value between the correct and incorrect estimations. 
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{img/pn_descr.png}
+    \caption{Discriminate correct from incorrect}
+    \label{fig:pn_desc}
+\end{figure}
+ The twenty best descriptors to divide the estimations into correct and incorrect estimations are given in figure \ref{fig:pn_desc}, also the treshold is given for the descriptor under consideration.
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | l |}
+            \hline
+            InfoGain:   &   Descriptor: \\  \hline
+            \hline
+            $0.423139$  &   lowLevel.pitch\_instantaneous\_confidence.median \\ \hline
+            $0.374362$  &   lowLevel.pitch\_instantaneous\_confidence.mean \\ \hline
+            $0.284290$  &   lowLevel.spectral\_spread.median    \\  \hline
+            $0.185515$  &   lowLevel.spectral\_spread.mean    \\  \hline
+            $0.148130$  &   lowLevel.spectral\_skewness.median    \\  \hline
+            $0.132967$  &   lowLevel.spectral\_rolloff.mean    \\  \hline
+            $0.128956$  &   lowLevel.spectral\_flatness\_db.median    \\  \hline
+            $0.127023$  &   lowLevel.average\_loudness    \\  \hline
+            $0.124936$  &   sfx.pitch\_min\_to\_total    \\  \hline
+            $0.123078$  &   lowLevel.spectral\_centroid.mean    \\  \hline
+            $0.121924$  &   lowLevel.silence\_rate\_60dB.mean    \\  \hline
+            $0.110486$  &   lowLevel.pitch.median    \\  \hline
+            $0.110434$  &   lowLevel.spectral\_rms.median    \\  \hline
+            $0.101883$  &   lowLevel.dissonance.median    \\  \hline
+            $0.098656$  &   lowLevel.barkbands\_skewness.mean    \\  \hline
+            $0.096012$  &   lowLevel.spectral\_rms.mean    \\  \hline
+            $0.095506$  &   lowLevel.barkbands\_skewness.median    \\  \hline
+            $0.093984$  &   lowLevel.pitch\_salience.median    \\  \hline
+            $0.091919$  &   lowLevel.spectral\_complexity.mean    \\  \hline
+            $0.091475$  &   lowLevel.spectral\_strongpeak.median    \\  \hline
+        \end{tabular}
+        \caption{WEKA Ranking of descriptors}
+        \label{table:weka_desc}
+    \end{center}
+\end{table}
+Table \ref{table:weka_desc} lists the descriptors from most usefull to classify incorrect and correct estimations to the less usefull.
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{img/pnOct_descr.png}
+    \caption{Discriminate octave errors}
+    \label{fig:pnOct_desc}
+\end{figure}
+Figure \ref{fig:pnOct_desc} lists the twenty best descriptors to classify the octave errors from the other estimations, also the tresholds are given.
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | l |}
+            \hline
+            InfoGain:   &   Descriptor: \\  \hline
+            \hline
+            $0.296336$  &   lowLevel.pitch\_instantaneous\_confidence.mean   \\ \hline
+            $0.250393$  &   lowLevel.pitch\_instantaneous\_confidence.median   \\ \hline
+            $0.200927$  &   lowLevel.spectral\_spread.median   \\ \hline
+            $0.145147$  &   lowLevel.spectral\_skewness.median   \\ \hline
+            $0.144761$  &   lowLevel.spectral\_spread.mean   \\ \hline
+            $0.141825$  &   lowLevel.silence\_rate\_60dB.mean   \\ \hline
+            $0.141121$  &   lowLevel.spectral\_flatness\_db.median   \\ \hline
+            $0.130088$  &   lowLevel.spectral\_complexity.mean   \\ \hline
+            $0.127021$  &   lowLevel.spectral\_complexity.median   \\ \hline
+            $0.122647$  &   lowLevel.spectral\_rms.median   \\ \hline
+            $0.117874$  &   sfx.pitch\_min\_to\_total   \\ \hline
+            $0.115669$  &   lowLevel.spectral\_flatness\_db.mean   \\ \hline
+            $0.114153$  &   lowLevel.spectral\_rms.mean   \\ \hline
+            $0.105331$  &   lowLevel.barkbands\_skewness.mean   \\ \hline
+            $0.104639$  &   lowLevel.spectral\_energyband\_middle\_high.median   \\ \hline
+            $0.094725$  &   lowLevel.spectral\_kurtosis.median   \\ \hline
+            $0.094578$  &   lowLevel.barkbands\_spread.median   \\ \hline
+            $0.091152$  &   lowLevel.spectral\_rolloff.mean   \\ \hline
+            $0.090370$  &   lowLevel.spectral\_rolloff.median   \\ \hline
+            $0.086788$  &   lowLevel.dissonance.mean   \\ \hline
+
+       \end{tabular}
+        \caption{WEKA Ranking of descriptors for octave errors}
+        \label{table:wekaOct_desc}
+    \end{center}
+\end{table}
+The ranking of the descriptors to classify the estimations between those which are octave errors and which are not, obtained trough WEAK is given in table \ref{table:wekaOct_desc}.
+
 \subsection{Discussion}
 \subsubsection{Pitch estimation related}
 It is visible from figure \ref{fig:penr_cvs}  that the confidence, variance and salience perform equally well with a low minimal predictor value. However the confidence measurement clearly outperforms the other with a higher minimal value both in terms of sounds included without suffering a loss in accuracy. Tables \ref{table:pred_cvs} and \ref{table:weka_cvs} also show that the confidence is the most usefull to discriminate the correct from the incorrect estimations. 
-%Due to the characteristics of the algorithms used in the pitchYinFFT pitch estimation some type of sounds could be 
+The confidence measurement also seems to be the best in discriminating octave errors from non-octave errors, but to a lesser extend.
 
+\subsubsection{Descriptors}
+In the above data the earlier observation that the 'confidence' measurement was a good prediction for the errors is confirmed. Also the salience and pitch variance measurements again seem to be able to predict the error values to some extend. 
+From figure \ref{fig:pred_desc} and especially figure \ref{fig:pn_desc} a clear importance can be seen of the 'silence\_rate' descriptors. These descriptors give a measure for the ammount frames with a signal above a certain amplitude treshold versus the amount of frames with a signal below a certain amplitude treshold. Also figure \ref{fig:pred_desc} indicates that the 'average\_loudness' is a descriptor that is able to predict a lot of errors, this measurement is ofcourse influenced by the presence of silent frames, but it is also possible that some sounds are very silent and in this way badly influence the estimation.
+Quite a few descriptors relating to the spectral characteristics of the sounds are identified as important in separating the right from wrong estimations. The descriptors containing 'spectral' in the name; the descriptors 'sccoeffs' and 'scvallets' and; all the descriptors with 'barkbands' are measurements of the spectral characteristics of the sounds. The 'sccoeffs' and 'scvalleys' relate to the contrast between the spectral peaks and the spectral valleys. The 'spectral' descriptors measure different characteristics of the spectral distribution. The 'barkbands' use a different frequency scale (a Bark band scale instead of a linear frequency scale). Spectral skewness relates to the asymetry of the spectrum. Spectral kurtosis is a measurement for the tailedness (amount of 'outliers') of the spectrum. In addition to these the 'dissonance' and 'oddtoevenharmonicenergyratio' descriptors give information about the content and makeup of the tonal material in the signal. 
+Lastly a few descriptors relating to the pitch of the sounds are identified as usefull to select the sounds which will result in high errors in the pitch estimation. The 'hpcp' and 'thpcp' descriptors relate to the note (pitch class) of the signal irrespective of the octave it is in. The values from the 'hpcp' descriptor that are important to separate the correct from the incorrect estimations is the variance and maximal value of the hpcp per sound. If the hpcp value varies alot througout a sound the algorithm is not finding the same pitch class for succesive frames of a sound. The 'thpcp' calculates the relative intensity of all the 12 pitches in the western diatonic pitch system. However in this calculation the vector returned by the descriptor is summed to obtain a single value to use to separate the estimations. A higher value thus corresponds to one pitch being relatively more present than the other pitches, during the sound. The prominence of one pitch relative to the other pitches obviously relates to the 'ease' with which the pitch estimation algorithm can find the pitch, as the pitch is more prominent. Interestingly the Weka ranker also finds the 'pitch.median' measurement (the estimated pitch) valuable to discriminate the sounds as visible in table \ref{table:weka_desc}.
 
+Also for the identification of the octave errors the confidence measurement seems a usefull separator, however the difference is not so big. Also again the 'silence\_rate' seems to influence the estimation, but again it is not very reliable. Basically, the measurements which predict errors or separate errors from non-errors are also able to predict and separate octave errors altough -unfortunately- to a lesser extend. 
 % --------------------------------------------------------------------------------------|
 
 % --------------------------------------------------------------------------------------|
 % Improvements
 % --------------------------------------------------------------------------------------|
 \section{Improvements}
+In the following section the results obtained in the above steps are discussed to propose improvements to the pitch estimation. The improvements can be based on one hand on identification of erroneous estimations and discarting these from the pool or recalculating the estimation with different parameters or implementations. On the other hand the some improvements are proposed to increase the accuracy of the estimations.
 
-\subsection{Method}
-
-\subsection{Results}
-
-\subsection{Discussion}
 
 
 % --------------------------------------------------------------------------------------|
