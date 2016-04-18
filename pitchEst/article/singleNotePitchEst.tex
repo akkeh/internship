@@ -1,15 +1,17 @@
-\documentclass{article}
+\documentclass{proc}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{pdfpages}
 
 \title{Assessment of Pitch Estimation Algorithm pitchYinFFT for Single-note Instrument Sounds}
 \author{Akke Houben}
 \date{2016}
 
 %\begin{figure}
-%	\includegraphics{img/plan_tot.jpg}
-%	\caption{Total plan of the system}
-%	\label{fig:total}
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{img/pTag_distribution.png}
+%    \caption{Distribution of annotated pitches}
+%    \label{fig:pTag_distr}
 %\end{figure}
 
 \begin{document}
@@ -19,9 +21,9 @@
 % Introduction
 % --------------------------------------------------------------------------------------|
 \section{Introduction}
-Freesound\footnote{http://freesound.org/} is a project initiated and maintained by the Music Technology Group of the Universitat Pompeu Fabra (Barcelona) \footnote{http://mtg.upf.edu/} with the aim to "create a huge collaborative database of audio snippets, samples, recordings, bleeps, ... released under Creative Commons licenses that allow their reuse." and "to create an open database of sounds that can also be used for scientific rescearch and be integrated in third party applications." (http://freesound.org/). Following these aims efforts are undertaken to present the collection of sounds is multiple ways. This database contains a vast collection of single-note instrument sounds, which can be perfectly usable to use in software sample synthesisers to create digital instruments which are playable with for instance a MIDI keyboard. However it is a challenge to automatically collect the right sounds together and to make sure all the needed sounds are found or created. This current article will adres the problem of pitch estimation of single-note sounds. It is important to be able to get reliable pitch estimates as the software sample synthesiser demands that the rightly pitched sound is placed under the right keyboardkey. The Freesound pitch estimation is done using the pitchYinFFT algorithm contained in the Essentia library (Bogdanov, et al., 2013; http://essentia.upf.edu/). The pitchYinFFT is a optimalisation proposed by Brossier (Brossier, 2007) for reduced calculation time of the YIN algorithm of Cheveigné and Kawahara (Cheveigné & Kawahara, 2002; Bogdanov, et al., 2013). 
+Freesound\footnote{http://freesound.org/} is a project initiated and maintained by the Music Technology Group of the Universitat Pompeu Fabra (Barcelona) \footnote{http://mtg.upf.edu/} with the aim to "create a huge collaborative database of audio snippets, samples, recordings, bleeps, ... released under Creative Commons licenses that allow their reuse." and "to create an open database of sounds that can also be used for scientific rescearch and be integrated in third party applications." (http://freesound.org/). Following these aims efforts are undertaken to present the collection of sounds is multiple ways. This database contains a vast collection of single-note instrument sounds, which can be perfectly usable to use in software sample synthesisers to create digital instruments which are playable with for instance a MIDI keyboard. However it is a challenge to automatically collect the right sounds together and to make sure all the needed sounds are found or created. This current article will adres the problem of pitch estimation of single-note sounds. It is important to be able to get reliable pitch estimates as the software sample synthesiser demands that the rightly pitched sound is placed under the right keyboardkey. The Freesound pitch estimation is done using the pitchYinFFT algorithm contained in the Essentia library (Bogdanov, et al., 2013; http://essentia.upf.edu/). The pitchYinFFT is a optimalisation proposed by Brossier (Brossier, 2007) for reduced calculation time of the YIN algorithm of Cheveigné and Kawahara (Cheveigné \& Kawahara, 2002; Bogdanov, et al., 2013). 
 In this document the performance of the pitch estimation algorithm used by Freesound to estimate the pitches of sounds on single-note sounds will be assessed. The method used in this assessment is quite straight forward. A large collection of annotated sounds is gathered from Freesound and two other sources\footnote{Attached is a desription of the sounds used in this assessment as well as a comparison between the pitch estimates taken from Freesound and the locally computed estimates.}.
- This assessment will consist of a observation of the quality of the estimation (1), followed by a discussion on factors able to predict the quality of this estimation (2). Lastly possible improvements to the algorithm or the useage of the algorithm will be proposed and discussed (3).
+ This assessment will consist of a observation of the quality of the estimation (section 2), followed by a discussion on factors able to predict the quality of this estimation (section 3). Lastly possible improvements to the algorithm or the useage of the algorithm will be proposed and discussed (section 4).
 % --------------------------------------------------------------------------------------|
 
 % --------------------------------------------------------------------------------------|
@@ -38,19 +40,19 @@ Figure \ref{fig:pTag_distr} shows the distribution of the annotated pitches and 
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/pTag_distribution.png}
+    \includegraphics[width=0.5\textwidth]{img/pTag_distribution.png}
     \caption{Distribution of annotated pitches}
     \label{fig:pTag_distr}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/pEst_distribution.png}
+    \includegraphics[width=0.5\textwidth]{img/pEst_distribution.png}
     \caption{Distribution of estimated pitches}
     \label{fig:pEst_distr}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/err_distribution.png}
+    \includegraphics[width=0.5\textwidth]{img/err_distribution.png}
     \caption{Distribution of errors (annotation - estimation)}
     \label{fig:err_distr}
 \end{figure}
@@ -72,14 +74,14 @@ As pitch is clearly a human percept it is more usefull not to talk in terms of f
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/erb_distribution.png}
+    \includegraphics[width=0.5\textwidth]{img/erb_distribution.png}
     \caption{Distribution of ERB distances of wrong estimates}
     \label{fig:erb_distr}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/st_distribution.png}
+    \includegraphics[width=0.5\textwidth]{img/st_distribution.png}
     \caption{Distribution of semitone distances of wrong estimates}
     \label{fig:st_distr}
 \end{figure}
@@ -106,7 +108,7 @@ A common error in pitch estimations are ocatve errors (Gerhard, 2003), here the 
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/octerr1.png}
+    \includegraphics[width=0.5\textwidth]{img/octerr1.png}
     \caption{Octave Errors}
     \label{fig:octerr1}
 \end{figure}
@@ -142,7 +144,7 @@ Due to the characteristics of the algorithms used in the pitchYinFFT pitch estim
 \subsubsection{Pitch estimation related}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/penr_cvs.png}
+    \includegraphics[width=0.5\textwidth]{img/penr_cvs.png}
     \caption{Precision and Recall of confidence, variance and salience}
     \label{fig:penr_cvs}
 \end{figure}
@@ -201,7 +203,7 @@ Table \ref{table:pred_cvs} shows the performance of confidence, variance and sal
         \label{table:weka_cvs}
     \end{center}
 \end{table}
-Lastly table \ref{table:weka_cvs} lists the ranking of the confidence, variance and salience found by WEKA, The correct results were sampled randomly \footnote{Find attached a document with a comparison of the sample and the total dataset}.
+Lastly table \ref{table:weka_cvs} lists the ranking of the confidence, variance and salience found by WEKA. The correct results were sampled randomly with considering to maintain homogeneity between the sample and all the data.
 
 \begin{table}[h]
     \begin{center}
@@ -232,14 +234,14 @@ In table \ref{table:msdiffOct_cvs} the difference in mean and standard deviation
 \subsubsection{Descriptors}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/pred_descr.png}
+    \includegraphics[width=0.5\textwidth]{img/pred_descr.png}
     \caption{Difference in mean values}
     \label{fig:pred_desc}
 \end{figure}
 Figure \ref{fig:pred_desc} shows the twenty descriptors with the biggest difference in mean value between the correct and incorrect estimations. 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/pn_descr.png}
+    \includegraphics[width=0.5\textwidth]{img/pn_descr.png}
     \caption{Discriminate correct from incorrect}
     \label{fig:pn_desc}
 \end{figure}
@@ -250,26 +252,26 @@ Figure \ref{fig:pred_desc} shows the twenty descriptors with the biggest differe
             \hline
             InfoGain:   &   Descriptor: \\  \hline
             \hline
-            $0.423139$  &   lowLevel.pitch\_instantaneous\_confidence.median \\ \hline
-            $0.374362$  &   lowLevel.pitch\_instantaneous\_confidence.mean \\ \hline
-            $0.284290$  &   lowLevel.spectral\_spread.median    \\  \hline
-            $0.185515$  &   lowLevel.spectral\_spread.mean    \\  \hline
-            $0.148130$  &   lowLevel.spectral\_skewness.median    \\  \hline
-            $0.132967$  &   lowLevel.spectral\_rolloff.mean    \\  \hline
-            $0.128956$  &   lowLevel.spectral\_flatness\_db.median    \\  \hline
-            $0.127023$  &   lowLevel.average\_loudness    \\  \hline
+            $0.423139$  &    confidence.median \\ \hline
+            $0.374362$  &    confidence.mean \\ \hline
+            $0.284290$  &    spectral\_spread.median    \\  \hline
+            $0.185515$  &    spectral\_spread.mean    \\  \hline
+            $0.148130$  &    spectral\_skewness.median    \\  \hline
+            $0.132967$  &    spectral\_rolloff.mean    \\  \hline
+            $0.128956$  &    spectral\_flatness\_db.median    \\  \hline
+            $0.127023$  &    average\_loudness    \\  \hline
             $0.124936$  &   sfx.pitch\_min\_to\_total    \\  \hline
-            $0.123078$  &   lowLevel.spectral\_centroid.mean    \\  \hline
-            $0.121924$  &   lowLevel.silence\_rate\_60dB.mean    \\  \hline
-            $0.110486$  &   lowLevel.pitch.median    \\  \hline
-            $0.110434$  &   lowLevel.spectral\_rms.median    \\  \hline
-            $0.101883$  &   lowLevel.dissonance.median    \\  \hline
-            $0.098656$  &   lowLevel.barkbands\_skewness.mean    \\  \hline
-            $0.096012$  &   lowLevel.spectral\_rms.mean    \\  \hline
-            $0.095506$  &   lowLevel.barkbands\_skewness.median    \\  \hline
-            $0.093984$  &   lowLevel.pitch\_salience.median    \\  \hline
-            $0.091919$  &   lowLevel.spectral\_complexity.mean    \\  \hline
-            $0.091475$  &   lowLevel.spectral\_strongpeak.median    \\  \hline
+            $0.123078$  &    spectral\_centroid.mean    \\  \hline
+            $0.121924$  &    silence\_rate\_60dB.mean    \\  \hline
+            $0.110486$  &    pitch.median    \\  \hline
+            $0.110434$  &    spectral\_rms.median    \\  \hline
+            $0.101883$  &    dissonance.median    \\  \hline
+            $0.098656$  &    barkbands\_skewness.mean    \\  \hline
+            $0.096012$  &    spectral\_rms.mean    \\  \hline
+            $0.095506$  &    barkbands\_skewness.median    \\  \hline
+            $0.093984$  &    pitch\_salience.median    \\  \hline
+            $0.091919$  &    spectral\_complexity.mean    \\  \hline
+            $0.091475$  &    spectral\_strongpeak.median    \\  \hline
         \end{tabular}
         \caption{WEKA Ranking of descriptors}
         \label{table:weka_desc}
@@ -278,7 +280,7 @@ Figure \ref{fig:pred_desc} shows the twenty descriptors with the biggest differe
 Table \ref{table:weka_desc} lists the descriptors from most usefull to classify incorrect and correct estimations to the less usefull.
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/pnOct_descr.png}
+    \includegraphics[width=0.5\textwidth]{img/pnOct_descr.png}
     \caption{Discriminate octave errors}
     \label{fig:pnOct_desc}
 \end{figure}
@@ -289,26 +291,26 @@ Figure \ref{fig:pnOct_desc} lists the twenty best descriptors to classify the oc
             \hline
             InfoGain:   &   Descriptor: \\  \hline
             \hline
-            $0.296336$  &   lowLevel.pitch\_instantaneous\_confidence.mean   \\ \hline
-            $0.250393$  &   lowLevel.pitch\_instantaneous\_confidence.median   \\ \hline
-            $0.200927$  &   lowLevel.spectral\_spread.median   \\ \hline
-            $0.145147$  &   lowLevel.spectral\_skewness.median   \\ \hline
-            $0.144761$  &   lowLevel.spectral\_spread.mean   \\ \hline
-            $0.141825$  &   lowLevel.silence\_rate\_60dB.mean   \\ \hline
-            $0.141121$  &   lowLevel.spectral\_flatness\_db.median   \\ \hline
-            $0.130088$  &   lowLevel.spectral\_complexity.mean   \\ \hline
-            $0.127021$  &   lowLevel.spectral\_complexity.median   \\ \hline
-            $0.122647$  &   lowLevel.spectral\_rms.median   \\ \hline
+            $0.296336$  &    confidence.mean   \\ \hline
+            $0.250393$  &    confidence.median   \\ \hline
+            $0.200927$  &    spectral\_spread.median   \\ \hline
+            $0.145147$  &    spectral\_skewness.median   \\ \hline
+            $0.144761$  &    spectral\_spread.mean   \\ \hline
+            $0.141825$  &    silence\_rate\_60dB.mean   \\ \hline
+            $0.141121$  &    spectral\_flatness\_db.median   \\ \hline
+            $0.130088$  &    spectral\_complexity.mean   \\ \hline
+            $0.127021$  &    spectral\_complexity.median   \\ \hline
+            $0.122647$  &    spectral\_rms.median   \\ \hline
             $0.117874$  &   sfx.pitch\_min\_to\_total   \\ \hline
-            $0.115669$  &   lowLevel.spectral\_flatness\_db.mean   \\ \hline
-            $0.114153$  &   lowLevel.spectral\_rms.mean   \\ \hline
-            $0.105331$  &   lowLevel.barkbands\_skewness.mean   \\ \hline
-            $0.104639$  &   lowLevel.spectral\_energyband\_middle\_high.median   \\ \hline
-            $0.094725$  &   lowLevel.spectral\_kurtosis.median   \\ \hline
-            $0.094578$  &   lowLevel.barkbands\_spread.median   \\ \hline
-            $0.091152$  &   lowLevel.spectral\_rolloff.mean   \\ \hline
-            $0.090370$  &   lowLevel.spectral\_rolloff.median   \\ \hline
-            $0.086788$  &   lowLevel.dissonance.mean   \\ \hline
+            $0.115669$  &    spectral\_flatness\_db.mean   \\ \hline
+            $0.114153$  &    spectral\_rms.mean   \\ \hline
+            $0.105331$  &    barkbands\_skewness.mean   \\ \hline
+            $0.104639$  &    spectral\_energyband\_middle\_high.median   \\ \hline
+            $0.094725$  &    spectral\_kurtosis.median   \\ \hline
+            $0.094578$  &    barkbands\_spread.median   \\ \hline
+            $0.091152$  &    spectral\_rolloff.mean   \\ \hline
+            $0.090370$  &    spectral\_rolloff.median   \\ \hline
+            $0.086788$  &    dissonance.mean   \\ \hline
 
        \end{tabular}
         \caption{WEKA Ranking of descriptors for octave errors}
@@ -337,6 +339,71 @@ Also for the identification of the octave errors the confidence measurement seem
 \section{Improvements}
 In the following section the results obtained in the above steps are discussed to propose improvements to the pitch estimation. The improvements can be based on one hand on identification of erroneous estimations and discarting these from the pool or recalculating the estimation with different parameters or implementations. On the other hand the some improvements are proposed to increase the accuracy of the estimations.
 
+\subsection{Confidence}
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | c | r |}
+            \hline
+            Incorrect estimations:  &               &               \\  \hline
+                                    &   All frames: &   $18.67\%$   \\  \hline
+                                    &   High conf.: &   $13.80\%$    \\  \hline
+            Octave errors:      &               &               \\  \hline
+                                &   All frames: &   $9.77\%$   \\  \hline
+                                &   High conf.: &   $8.77\%$   \\  \hline
+        \end{tabular}
+        \caption{Improvement by omitting low confidence frames}
+        \label{table:impr_c}
+    \end{center}
+\end{table}
+The confidence measurement can predict around $87\%$ of the estimations correctly when using a treshold of around $0.62$, also this measurement is most easy to use as it is already returned by the pitchYinFFT algorithm and thus no extra calculation steps are needed. When it is possible sounds which are estimated with a confidence $< 0.62$ could be excluded. A more elegant usage of the confidence measurement is using only the pitch estimate of the frames with a confidence higher than $0.62$. The confidence measurement is calculated for each frame along with the pitch estimate. This confidence measurement can be used to select only the frames of which the pitch can be estimated with a high confidence. Taking the confidence value found above in the true positive/ true negative test to best predict the errorneous estimates the following improvements shown in table \ref{table:impr_c}.
+
+\subsection{Silence \& Attackphase}
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | c | r |}
+            \hline
+            Incorrect estimations:  &                   &               \\  \hline
+                                    &   All frames:     &   $18.67\%$   \\  \hline
+                                    &   No silence:     &   $13.11\%$    \\  \hline
+                                    &   No attack:      &   $18.19\%$    \\  \hline
+                                    &   No sil.\&att.   &   $16.14\%$    \\  \hline
+            Octave errors:      &                   &               \\  \hline
+                                &   All frames:     &   $9.77\%$   \\  \hline
+                                &   No silence:     &   $6.17\%$   \\  \hline
+                                &   No attack:      &   $9.68\%$   \\  \hline
+                                &   No sil.\&att.:  &   $8.80\%$   \\  \hline
+        \end{tabular}
+        \caption{Improvement by omitting silent or attackphase frames}
+        \label{table:impr_sil}
+    \end{center}
+\end{table}
+A clear improvement can be made by omitting the silent frames during the pitch estimation because the YIN algoritmh will, due to it implementation, choose the global minimum as the lag time belonging to the pitch of the sound if no other dip falls below some treshold (Cheveigné \& Kawahara, 2002), which is unchanged in the spectral domain implementation (Brossier, 2007) used in Essentia. On top of this improvement the trimming of the attack-phase of the sounds could improve the accuracy even more as the attack-phase often contains more non-harmonic partials than the 'stable' part of the sound REF wich can interfere with the pitch estimation. Below a comparison is given between the analysis all the frames, without the silent frames, without the frames before the attack-phase and a combined method with only the non-silent frames after the attack-phase. Table \ref{table:impr_sil} shows the improvements obtained by omitting only the silent frames, only the attack frames or removing both the silent and the attack frames.
+
+\subsection{Variance}
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | c | c | r |}
+            \hline
+                        &   mean            &   std             &   median  \\ \hline
+            All frames: &   $1308190.000$   &   $6738359.000$   &   $101348.617$    \\  \hline
+            No Silence: &   $118918.562$    &   $437697.125$    &   $4977.925$    \\  \hline
+            High conf.: &   $40432.332$     &   $242723.812$    &   $59.072$    \\  \hline
+        \end{tabular}
+        \caption{Reduction of estimated pitch variance}
+        \label{table:impr_var}
+    \end{center}
+\end{table}
+The variance is also easily calculated from the values returned by the pitchYinFFT algorithm for each separate frame. If the pitch estimations fluctuate heavily between consecutive frames the pitchYinFFT algorithm clearly struggles to find the right pitch. Heavy fluctuations in pitch estimates can be due to a relatively silent signal compared to the noise floor. It is also possible that the pitch estimation fluctuates because the pitch of the signal does fluctuate during the sound, if this is the case it is most likely that the sound is not that of a single note, but several notes in sucession. Sounds with either a high noisefloor or several pitches played in succesion are not usefull in the system envisioned in this article so the pitch variance measurement will be usefull in identifing sounds which should be excluded from the results. However as can be seen in table \ref{table:impr_var} discarting the low confidence and silent frames brings the variance considerably down already. 
+
+\section{Discussion}
+In the results above some improvements are proposed. The most promising improvement is the omittance of the silent frames in the calculation, as this gives the best results, as seen in table \ref{table:impr_sil} but also does not impose any destructive manipulation upon the signal. 
+
+\subsection{Spectral}
+The above observation that some spectral descriptors are usefull for identifing erroneous estimations does not give much possibility to improve the accuracy as changing the spectral makeup of a sound might improve the pitch estimate, but poses the problem as to what extend the perception of the pitch of the sound will change due to this spectral transformation. Also using spectral descriptors to reject some sounds from the system might prevent the system to succeed in collecting sounds of particular instruments. However it might be interesting to look into using some human auditory modeling technques to enhance the pitch estimate and to bring the calculation of the estimation closer to a 'real' scenario. In the current assessment this is not done.
+
+\subsection{Octave Errors}
+As stated above a good $50\%$ of the errors can be accounted for by octave errors. A lot of improvement can be achieved by indentifing octave errors, as the estimates are musically very close to the correct pitch (musically there is a smal difference between a note and the same note an octave higher or lower). It might be usefull to identify the occurence of an octave error and multiplying or dividing the estimate by the appropriate amount to get to the correct note in the correct octave. However as seen above none of the descriptors can identify the octave errors correctly more than $12\%$. Also, when an octave error is identified it is not yet clear what type of octave error (sub octave or super octave) or what amplitude (amount of octaves) the octave error has. So it might be a good approach to search for other methods of identifing and quantifying octave errors. In the current assessment this is not done.
+
 
 
 % --------------------------------------------------------------------------------------|
@@ -345,13 +412,143 @@ In the following section the results obtained in the above steps are discussed t
 % Conclusion
 % --------------------------------------------------------------------------------------|
 \section{Conclusion}
+In this article the performance pitch estimation algorithm, pitchYinFFT, used by Freesound to estimate the pitch of the sounds that are uploaded is discussed. The calculation of Freesound at upload time in mimiced to be able to include non-Freesound sounds and to be able to investigate improvements to the usage of the algoritm. It is found that the current usage of the pitchYinFFT is not an optimal one for the estimation of the pitch of single-note sounds. Some measurements returned by the pitchYinFFT algorithm aswell as a collection of other descriptors are used to find predictors for the wrongly estimated sounds and to find possible improvements. From this the suggestion to use only the results of the pitch estimation of the frames which contain a loud enough portion of the signal of which the pitch is to be estimated is proposed and tested to decrease the overall error rate from $18.67\%$ to $13.11\%$. Besides this some other possible directions for further investigation are pointed out. 
 % --------------------------------------------------------------------------------------|
 
 % --------------------------------------------------------------------------------------|
 % References
 % --------------------------------------------------------------------------------------|
-
-
 \section{References}
+\begin{itemize}
+    \item Freesound: http://freesound.org/
+    \item Essentia: http://essentia.upf.edu
+    \item Bogdanov, D., Wack N., Gómez E., Gulati S., Herrera P., Mayor O., et al. (2013). ESSENTIA: an Audio Analysis Library for Music Information Retrieval. International Society for Music Information Retrieval Conference (ISMIR'13). 493-498.
+    \item Brossier, P.M (2007). Automatic Annotation of Musical Audio for Interactive Applications. QMUL, London, UK.
+    \item Cheveigné, A. \& Kawahara, H. (2002). YIN, a fundamental frequency estimator for speech and music. The Journal of the Acoustical Society of America, 111(4), 1917-1930, 2002.
+    \item Vaquero Patricio, C. (2012). Improving the description of instrumental sounds by using ontologies and automatic content analysis. MASTER THESIS – UPF 2012
+    \item Philharmonia Orchestra: http://www.philharmonia.co.uk/explore/make\_music
+    \item The University of Iowa Musical Instrument Samples: http://theremin.music.uiowa.edu/mis.html
+    \item Gerhard, D. (2003). Pitch Extraction and Fundamental Frequency: History and Current Techniques. Technical Report TR-CS 2003-06
+    \item Weka: http://www.cs.waikato.ac.nz/ml/weka/
+\end{itemize}
+% --------------------------------------------------------------------------------------|
+
+% --------------------------------------------------------------------------------------|
+% Appendices
+% --------------------------------------------------------------------------------------|
+\appendix
+\section{Contents of dataset}
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | l | c |}
+            \hline
+                            &   Source      &   Sounds  \\  \hline  
+            Freesound:      &               &           \\  \hline
+                            &   Carlos      &   $470$   \\  \hline
+                            &   good-sounds &   $113$   \\  \hline
+            non-Freesound:  &               &           \\  \hline
+                            &   Philharmonia&   $2973$  \\  \hline
+                            &   IOWA        &   $639$   \\  \hline
+            \hline
+            Total:          &               &   $4195$  \\  \hline
+        \end{tabular}
+        \caption{Amount of sounds per source}
+        \label{table:snds_amount}
+    \end{center}
+\end{table}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/distr_cs.png}
+    \caption{Distribution of annotated pitches (Carlos)}
+    \label{fig:cs_d}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/distr_gs.png}
+    \caption{Distribution of annotated pitches (good-sounds)}
+    \label{fig:gs_d}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/distr_ph.png}
+    \caption{Distribution of annotated pitches (Philharmonia)}
+    \label{fig:ph_d}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/distr_iw.png}
+    \caption{Distribution of annotated pitches (IOWA)}
+    \label{fig:iw_d}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/distr_tot.png}
+    \caption{Distribution of annotated pitches (all sounds)}
+    \label{fig:tot_d}
+\end{figure}
+The sounds used in this assessment come partly form Freesound and partly from two non-Freesound sources. The Freesound sounds come from two different sources: the sounds uploaded by the users Carlos Vaquero (Vaquero, 2012) and the sounds containing the tag 'good-sounds'. The non-Freesound sounds come from two sources mentioned in the masterthesis of Carlos Vaquero (Vaquero, 2012). Namely sounds from the Philharmonia Orchestra (http://www.philharmonia.co.uk/explore/make\_music) and several sounds from The University of Iowa Musical Instrument Samples (or as they call it MIS) (http://theremin.music.uiowa.edu/mis.html). All of the sounds are single-note sounds from real instruments. The sounds from the user Carlos Vaquero are recordings from different western instruments containting, among others, acoustic guitar, recorder, bassoon, several bowed instruments (played plucked and bowed with different techniques). The sounds with the tag 'good-sounds' are also single-notes of several western instruments, but only played with a 'normal' playing technique. The sounds from the Philharmonia Orchestra are several (vast) collections of sounds from different instruments of the orchestra, played in a wide range of techniques. The sounds chosen fro m the Philharmonia Orchestra are the cello, clarinet, guitar and violin. Lastly the sounds taken from the University of IOWA include piano, cello, trumpet, marimba and xylophone. All the sounds had to be checked to make sure no sounds with multiple pitches or ambiguous pitches were included into the calculation. In table \ref{table:snds_amount} the amount of sounds contained in each pack is shown. In figures \ref{fig:cs_d}, \ref{fig:gs_d}, \ref{fig:ph_d} and \ref{fig:iw_d} the distribution of the annotated pitches are shown for the separate sources and figure \ref{fig:tot_d} shows the distribution of the annotated pitches of all the sounds.
+
+\section{Comparison of locally and centrally calculated data}
+The data is computated locally trying to reproduce the data obtained from Freesound to allow to include sounds from non-Freeosund sources with verified annotations. Ideally the values obtained trough local calculation and the central calculation at uploadtime will be the same, although some small differences may occur. Table \ref{table:locfrs_comp} lists the differences between the data obtained trough freesound and the locally computated data.
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | l | c | c |}
+            \hline
+            Mean and std:           &   source      &   mean        &   std         \\  \hline  
+            Est. pitches            &               &               &               \\  \hline
+                                    &   Freesound   &   $411.667Hz$ &   $305.264Hz$ \\  \hline
+                                    &   Local       &   $417.284Hz$ &   $309.571Hz$ \\  \hline
+            Point-wise diff.:  &   $11.1967Hz$ &               &               \\  \hline
+            Confidence:             &               &               &               \\  \hline
+                                    &   Freesound   &   $0.734088$  &   $0.152733$  \\  \hline
+                                    &   Local       &   $0.726825$  &   $0.155669$  \\  \hline
+            Point-wise diff.:  &   $0.00783831$&               &               \\  \hline
+            Salience:               &               &               &               \\  \hline
+                                    &   Freesound   &   $0.468032$  &   $0.135647$  \\  \hline
+                                    &   Local       &   $0.467247$  &   $0.135743$  \\  \hline
+            Point-wise diff.:  &   $0.00548839$&               &               \\  \hline
+            \hline
+            Min.\&max.: &   source      &   min. val    &   max. val    \\  \hline
+            Est. pitches:               &               &               &               \\  \hline 
+                                        &   Freesound   &   $89.9533Hz$ &   $2004.75Hz$ \\  \hline
+                                        &   Local       &   $89.1426Hz$ &   $2105.35Hz$ \\  \hline
+            Confidences:                &               &               &               \\  \hline
+                                        &   Freesound   &   $0.353488$  &   $0.971915$  \\  \hline
+                                        &   Local       &   $0.347350$  &   $0.974891$  \\  \hline
+            Saliences:                  &               &               &               \\  \hline
+                                        &   Freesound   &   $0.111462$  &   $0.900048$  \\  \hline
+                                        &   Local       &   $0.109506$  &   $0.906070$  \\  \hline
+        \end{tabular}
+        \caption{Comparison of locally and centrally computed data}
+        \label{table:locfrs_comp}
+    \end{center}
+\end{table}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/locfrs_pest.png}
+    \caption{local v.s. central estimated pitches}
+    \label{fig:locfrs_pest}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/locfrs_conf.png}
+    \caption{local v.s. central confidences}
+    \label{fig:locfrs_conf}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/locfrs_sal.png}
+    \caption{local v.s. central saliences}
+    \label{fig:locfrs_sal}
+\end{figure}
+The difference between the results from Freesound and the locally computed data are probably attributable to the usage of an older version of the Essentia extractor in Freesound. Because of this the locally computed data will be used in this assessment.
+
+\onecolumn
+\section{Used Descriptors}
+\includegraphics{img/descriptors1.pdf}
+
+\includegraphics{img/descriptors2.pdf}
+
+\includegraphics{img/descriptors3.pdf}
 
 \end{document}
