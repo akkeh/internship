@@ -38,19 +38,19 @@ Figure \ref{fig:pTag_distr} shows the distribution of the annotated pitches and 
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{pTag_distribution.png}
+    \includegraphics[scale=0.5]{img/pTag_distribution.png}
     \caption{Distribution of annotated pitches}
     \label{fig:pTag_distr}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{pEst_distribution.png}
+    \includegraphics[scale=0.5]{img/pEst_distribution.png}
     \caption{Distribution of estimated pitches}
     \label{fig:pEst_distr}
 \end{figure}
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{err_distribution.png}
+    \includegraphics[scale=0.5]{img/err_distribution.png}
     \caption{Distribution of errors (annotation - estimation)}
     \label{fig:err_distr}
 \end{figure}
@@ -72,14 +72,14 @@ As pitch is clearly a human percept it is more usefull not to talk in terms of f
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{erb_distribution.png}
+    \includegraphics[scale=0.5]{img/erb_distribution.png}
     \caption{Distribution of ERB distances of wrong estimates}
     \label{fig:erb_distr}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{st_distribution.png}
+    \includegraphics[scale=0.5]{img/st_distribution.png}
     \caption{Distribution of semitone distances of wrong estimates}
     \label{fig:st_distr}
 \end{figure}
@@ -106,7 +106,7 @@ A common error in pitch estimations are ocatve errors (Gerhard, 2003), here the 
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{octerr1.png}
+    \includegraphics[scale=0.5]{img/octerr1.png}
     \caption{Octave Errors}
     \label{fig:octerr1}
 \end{figure}
@@ -132,10 +132,80 @@ Several measurements will be investigated for their usefullness as predictors fo
     \item Lastly the 'Select Attributes' functionality from Weka (http://www.cs.waikato.ac.nz/ml/weka/) using as Attribute Evaluator the 'InfoGainAttributeEval' and as Search Method the 'Ranker' is used.
 \end{enumerate}
 When considering predictors for octave errors, octave errors are considered 'incorrect estimations' and all estimates which are no octave errors are considered 'correct estimations'
+
+\subsubsection{Pitch estimation related}
+The pitch estimator used returns a confidence measurement, this should be a measure for the quality of the estimation. Besides the confidence measure the variance of the pitch estimation for each sound could be a prediction for the quality of the estimation. The pitch estimation is combined with a pitch salience measurement. Salience is an indication for howmuch tonal information the signal contains and as the pitch estimator is designed for tonal sound this could also be a predictor for the size of the estimation errors.
+
 \subsection{Results}
+\subsubsection{Pitch estimation related}
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{img/penr_cvs.png}
+    \caption{Precision and Recall of confidence, variance and salience}
+    \label{fig:penr_cvs}
+\end{figure}
+In figure \ref{fig:penr_cvs} the precision and recall of the confidence, variance and salience can be seen. For each value of the predictor (confidence, variance or salience) an accuracy is calculated (ratio of correctly included versus total amount of accepted sounds). The variance is transformed to a standard deviation value by taking the square root of the variance, becuase this provided a more informative predictor.
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | c | c | c |}
+            \hline
+                        &           &   mean:       &   std:        \\ \hline
+            Confidence  &           &               &               \\  \hline
+                        & Correct:  &   $0.91424$   &   $0.13082$   \\  \hline
+                        &Incorrect: &   $0.58102$   &   $0.25699$   \\  \hline
+            Norm. diff.:    &   $0.33321$   &&\\  \hline
+            \hline
+            Variance:   &           &               &               \\  \hline
+                        & Correct:  &   $-5.00515$  &   $1.74010$   \\  \hline
+                        &Incorrect: &   $-4.95345$   &   $1.70110$   \\  \hline
+            Norm. diff.:    &   $0.00441$   &&\\  \hline
+            \hline
+            Salience:   &           &               &               \\  \hline
+                        & Correct:  &   $0.46339$   &   $0.19306$   \\  \hline
+                        &Incorrect: &   $0.34857$   &   $0.21645$   \\  \hline
+            Norm. diff.:    &   $0.11482$   &&\\  \hline
+        \end{tabular}
+        \caption{Difference in mean and std}
+        \label{table:related}
+    \end{center}
+\end{table}
+In table \ref{table:related} the difference in mean and standard deviationvalues between the correct and incorrect estimations are given.
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | r |}
+            \hline
+            Predictor:  &   Performance:\\  \hline
+            \hline
+            Confidence: &   $82.43\%$   \\  \hline
+            Variance:   &   $54.61\%$   \\  \hline
+            Salience:   &   $58.31\%$   \\  \hline
+        \end{tabular}
+        \caption{Discrimination Performance}
+        \label{table:pred_cvs}
+    \end{center}
+\end{table}
+Table \ref{table:pred_cvs} shows the performance of confidence, variance and salience in discriminating the correct from the incorrect estimations.
+\begin{table}[h]
+    \begin{center}
+        \begin{tabular}{ | l | l |}
+            \hline
+            InfoGain:   &   Descriptor: \\  \hline
+            \hline
+            $0.4224$    &   Confidence  \\  \hline
+            $0.1223$    &   Salience    \\  \hline
+            $0.0115$    &   Variance    \\  \hline
+        \end{tabular}
+        \caption{WEKA Ranking of confidence, variance and salience}
+        \label{table:weka_cvs}
+    \end{center}
+\end{table}
+Lastly table \ref{table:weka_cvs} lists the ranking of the confidence, variance and salience found by WEKA, The correct results were sampled randomly \footnote{Find attached a document with a comparison of the sample and the total dataset}.
 
-
+\subsubsubsection{Octave errors}
+ 
 \subsection{Discussion}
+\subsubsection{Pitch estimation related}
+It is visible from figure \ref{fig:penr_cvs}  that the confidence, variance and salience perform equally well with a low minimal predictor value. However the confidence measurement clearly outperforms the other with a higher minimal value both in terms of sounds included without suffering a loss in accuracy. Tables \ref{table:pred_cvs} and \ref{table:weka_cvs} also show that the confidence is the most usefull to discriminate the correct from the incorrect estimations. 
 %Due to the characteristics of the algorithms used in the pitchYinFFT pitch estimation some type of sounds could be 
 
 
