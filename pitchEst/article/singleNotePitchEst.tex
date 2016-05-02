@@ -21,7 +21,9 @@
 % Introduction
 % --------------------------------------------------------------------------------------|
 \section{Introduction}
-Freesound\footnote{http://freesound.org/} is a project initiated and maintained by the Music Technology Group of the Universitat Pompeu Fabra (Barcelona) \footnote{http://mtg.upf.edu/} with the aim to "create a huge collaborative database of audio snippets, samples, recordings, bleeps, ... released under Creative Commons licenses that allow their reuse." and "to create an open database of sounds that can also be used for scientific rescearch and be integrated in third party applications." (http://freesound.org/). Following these aims efforts are undertaken to present the collection of sounds is multiple ways. This database contains a vast collection of single-note instrument sounds, which can be perfectly usable to use in software sample synthesisers to create digital instruments which are playable with for instance a MIDI keyboard. However it is a challenge to automatically collect the right sounds together and to make sure all the needed sounds are found or created. This current article will adres the problem of pitch estimation of single-note sounds. It is important to be able to get reliable pitch estimates as the software sample synthesiser demands that the rightly pitched sound is placed under the right keyboardkey. The Freesound pitch estimation is done using the pitchYinFFT algorithm contained in the Essentia library (Bogdanov, et al., 2013; http://essentia.upf.edu/). The pitchYinFFT is a optimalisation proposed by Brossier (Brossier, 2007) for reduced calculation time of the YIN algorithm of Cheveigné and Kawahara (Cheveigné \& Kawahara, 2002; Bogdanov, et al., 2013). 
+Freesound\footnote{http://freesound.org/} is a project initiated and maintained by the Music Technology Group of the Universitat Pompeu Fabra (Barcelona) \footnote{http://mtg.upf.edu/} with the aim to "create a huge collaborative database of audio snippets, samples, recordings, bleeps, ... released under Creative Commons licenses that allow their reuse." and "to create an open database of sounds that can also be used for scientific rescearch and be integrated in third party applications." (http://freesound.org/). Following these aims efforts are undertaken to present the collection of sounds is multiple ways. This database contains a vast collection of single-note instrument sounds, which can be perfectly usable to use in software sample synthesisers to create digital instruments which are playable with for instance a MIDI keyboard. However it is a challenge to automatically collect the right sounds together and to make sure all the needed sounds are found or created. 
+
+This current article will adres the problem of pitch estimation of single-note sounds. It is important to be able to get reliable pitch estimates as the software sample synthesiser demands that the rightly pitched sound is placed under the right keyboardkey. The Freesound pitch estimation is done using the pitchYinFFT algorithm contained in the Essentia library (Bogdanov, et al., 2013; http://essentia.upf.edu/). The pitchYinFFT is a optimalisation proposed by Brossier (Brossier, 2007) for reduced calculation time of the YIN algorithm (Cheveigné \& Kawahara, 2002) of Cheveigné and Kawahara (Bogdanov, et al., 2013). 
 In this document the performance of the pitch estimation algorithm used by Freesound to estimate the pitches of sounds on single-note sounds will be assessed. The method used in this assessment is quite straight forward. A large collection of annotated sounds is gathered from Freesound and two other sources\footnote{Attached is a desription of the sounds used in this assessment as well as a comparison between the pitch estimates taken from Freesound and the locally computed estimates.}.
  This assessment will consist of a observation of the quality of the estimation (section 2), followed by a discussion on factors able to predict the quality of this estimation (section 3). Lastly possible improvements to the algorithm or the useage of the algorithm will be proposed and discussed (section 4).
 % --------------------------------------------------------------------------------------|
@@ -88,14 +90,14 @@ As pitch is clearly a human percept it is more usefull not to talk in terms of f
 
 \begin{table}[h]
     \begin{center}
-        \begin{tabular}{ | l | c | c | c || r |}
+        \begin{tabular}{ | l | c | c | c |}
             \hline
-                        &   mean:       &   std:        &   median:     &   $distance < 1$:\\  \hline
-            ERBs:       &   $3.12ERBs$  &   $6.15ERBs$  &   $1.00ERBs$  &   $82.34\%$   \\  \hline
-            semitones:  &   $3.58st$    &   $8.95st$    &   $0.12st$    &   $81.33\%$   \\  
+                        &   mean:       &   std:        &   $distance < 1$:\\  \hline
+            ERBs:       &   $3.12ERBs$  &   $6.15ERBs$  &   $82.34\%$   \\  \hline
+            semitones:  &   $3.58st$    &   $8.95st$    &   $81.33\%$   \\  
             \hline
         \end{tabular}
-        \caption{ERB and semiton distances}
+        \caption{ERB and semitone distances}
         \label{table:ERB_st}
     \end{center}
 \end{table}
@@ -126,7 +128,7 @@ Figure \ref{fig:st_distr} and figure \ref{fig:octerr1} show that quite a lot of 
 In this section measurements to predict the performance of the estimation are investigated. Firstly predictors for the amplitude of the errors are looked at. After this factors which indicate the occurence of octave errors will be investigated.
 
 \subsection{Method}
-Several measurements will be investigated for their usefullness as predictors for the correctness of the estimates. Firstly some values returned by the pitchYinFFT and one measure directly related to the tonality of the signal are discussed. Secondly some other tonal and aural descriptors which can predict high error values are searched. The methods used to determine the usefullness of each measurement are fourfold:
+Several measurements will be investigated for their usefullness as predictors for the correctness of the estimates. Firstly some values returned by the pitchYinFFT and one measure directly related to the tonality of the signal are discussed. Secondly some other tonal and aural descriptors which can predict high error values are searched. The methods used to determine the usefullness of each measurement are threefold:
 \begin{enumerate}
     \item Firstly the difference in the mean of the values of the measurements between the correctly and incorrectly estimated sounds, the bigger this difference the more usefull the measurement. 
     \item Secondly the descriptors are tested for their abilities to correctly identify what sounds will be correctly estimated. The descriptors which acceptations and rejections coincide mostly with respectively the correctly and the incorrectly estimated sounds (highest percetage of true positives and true negatives) are most potent as predictors. 
@@ -135,7 +137,7 @@ Several measurements will be investigated for their usefullness as predictors fo
 When considering predictors for octave errors, octave errors are considered 'incorrect estimations' and all estimates which are no octave errors are considered 'correct estimations'
 
 \subsubsection{Pitch estimation related}
-The pitch estimator used returns a confidence measurement, this should be a measure for the quality of the estimation. Besides the confidence measure the variance of the pitch estimation for each sound could be a prediction for the quality of the estimation. The pitch estimation is combined with a pitch salience measurement. Salience is an indication for howmuch tonal information the signal contains and as the pitch estimator is designed for tonal sound this could also be a predictor for the size of the estimation errors.
+The pitch estimator used returns a confidence measurement, this should be a measure for the quality of the estimation. Besides the confidence measure the variance of the pitch estimation for each sound could be a prediction for the quality of the estimation. The pitch estimation is combined with a pitch salience measurement. Salience is an indication for how much tonal information the signal contains and as the pitch estimator is designed for tonal sound this could also be a predictor for the size of the estimation errors.
 
 \subsubsection{Descriptors}
 Due to the characteristics of the algorithms used in the pitchYinFFT pitch estimation some type of sounds could be more difficult to be correctly estimated than others. In this section some descriptor values\footnote{Find attached a list of the calculated descriptors} are calculated for the sounds used in the pitch estimation. Correlations are investigated between the values obtained for the descriptors and the errors of the pitch estimation. 
@@ -173,7 +175,7 @@ In figure \ref{fig:penr_cvs} the precision and recall of the confidence, varianc
         \label{table:related}
     \end{center}
 \end{table}
-In table \ref{table:related} the difference in mean and standard deviationvalues between the correct and incorrect estimations are given.
+In table \ref{table:related} the difference in mean and standard deviation values between the correct and incorrect estimations are given.
 \begin{table}[h]
     \begin{center}
         \begin{tabular}{ | l | r |}
@@ -229,7 +231,7 @@ Lastly table \ref{table:weka_cvs} lists the ranking of the confidence, variance 
         \label{table:msdiffOct_cvs}
     \end{center}
 \end{table}
-In table \ref{table:msdiffOct_cvs} the difference in mean and standard deviationvalues between the correct, the incorrect attributable to octave errors and non-octave error incorrect estimations are given. 
+In table \ref{table:msdiffOct_cvs} the difference in mean and standard deviation values between the correct estimations, the incorrect estimations attributable to octave errors and the non-octave error incorrect estimations are given. 
 
 \subsubsection{Descriptors}
 \begin{figure}
@@ -321,7 +323,7 @@ The ranking of the descriptors to classify the estimations between those which a
 
 \subsection{Discussion}
 \subsubsection{Pitch estimation related}
-It is visible from figure \ref{fig:penr_cvs}  that the confidence, variance and salience perform equally well with a low minimal predictor value. However the confidence measurement clearly outperforms the other with a higher minimal value both in terms of sounds included without suffering a loss in accuracy. Tables \ref{table:pred_cvs} and \ref{table:weka_cvs} also show that the confidence is the most usefull to discriminate the correct from the incorrect estimations. 
+It is visible from figure \ref{fig:penr_cvs}  that the confidence, variance and salience perform equally well with a low minimal predictor value. However the confidence measurement clearly outperforms the other with a higher minimal value both in terms of sounds included and without suffering a loss in accuracy. Tables \ref{table:pred_cvs} and \ref{table:weka_cvs} also show that the confidence is the most usefull to discriminate the correct from the incorrect estimations. 
 The confidence measurement also seems to be the best in discriminating octave errors from non-octave errors, but to a lesser extend.
 
 \subsubsection{Descriptors}
@@ -377,7 +379,7 @@ The confidence measurement can predict around $87\%$ of the estimations correctl
         \label{table:impr_sil}
     \end{center}
 \end{table}
-A clear improvement can be made by omitting the silent frames during the pitch estimation because the YIN algoritmh will, due to it implementation, choose the global minimum as the lag time belonging to the pitch of the sound if no other dip falls below some treshold (Cheveigné \& Kawahara, 2002), which is unchanged in the spectral domain implementation (Brossier, 2007) used in Essentia. On top of this improvement the trimming of the attack-phase of the sounds could improve the accuracy even more as the attack-phase often contains more non-harmonic partials than the 'stable' part of the sound REF wich can interfere with the pitch estimation. Below a comparison is given between the analysis all the frames, without the silent frames, without the frames before the attack-phase and a combined method with only the non-silent frames after the attack-phase. Table \ref{table:impr_sil} shows the improvements obtained by omitting only the silent frames, only the attack frames or removing both the silent and the attack frames.
+A clear improvement can be made by omitting the silent frames during the pitch estimation because the YIN algoritmh will, due to it implementation, choose the global minimum as the lag time belonging to the pitch of the sound if no other dip falls below some treshold (Cheveigné \& Kawahara, 2002), which is unchanged in the spectral domain implementation (Brossier, 2007) used in Essentia. On top of this improvement the trimming of the attack-phase of the sounds could improve the accuracy even more as the attack-phase often contains more non-harmonic partials than the 'stable' part of the sound REF wich can interfere with the pitch estimation. Below a comparison is given between the analysis of all the frames, without the silent frames, without the frames before the attack-phase and a combined method with only the non-silent frames after the attack-phase. Table \ref{table:impr_sil} shows the improvements obtained by omitting only the silent frames, only the attack frames or removing both the silent and the attack frames.
 
 \subsection{Variance}
 \begin{table}[h]
@@ -402,7 +404,7 @@ In the results above some improvements are proposed. The most promising improvem
 The above observation that some spectral descriptors are usefull for identifing erroneous estimations does not give much possibility to improve the accuracy as changing the spectral makeup of a sound might improve the pitch estimate, but poses the problem as to what extend the perception of the pitch of the sound will change due to this spectral transformation. Also using spectral descriptors to reject some sounds from the system might prevent the system to succeed in collecting sounds of particular instruments. However it might be interesting to look into using some human auditory modeling technques to enhance the pitch estimate and to bring the calculation of the estimation closer to a 'real' scenario. In the current assessment this is not done.
 
 \subsection{Octave Errors}
-As stated above a good $50\%$ of the errors can be accounted for by octave errors. A lot of improvement can be achieved by indentifing octave errors, as the estimates are musically very close to the correct pitch (musically there is a smal difference between a note and the same note an octave higher or lower). It might be usefull to identify the occurence of an octave error and multiplying or dividing the estimate by the appropriate amount to get to the correct note in the correct octave. However as seen above none of the descriptors can identify the octave errors correctly more than $12\%$. Also, when an octave error is identified it is not yet clear what type of octave error (sub octave or super octave) or what amplitude (amount of octaves) the octave error has. So it might be a good approach to search for other methods of identifing and quantifying octave errors. In the current assessment this is not done.
+As stated above a good $50\%$ of the errors can be accounted for by octave errors. A lot of improvement can be achieved by indentifing octave errors, as the estimates are musically very close to the correct pitch (musically there is a smal difference between a note and the same note an octave higher or lower). It might be usefull to identify the occurence of an octave error and multiplying or dividing the estimate by the appropriate amount to get to the correct note in the correct octave. However as seen above none of the descriptors can identify the octave errors with a success rate of more than $12\%$. Also, when an octave error is identified it is not yet clear what type of octave error (sub octave or super octave) or what amplitude (amount of octaves) the octave error has. So it might be a good approach to search for other methods of identifing and quantifying octave errors. In the current assessment this is not done.
 
 
 
@@ -412,7 +414,7 @@ As stated above a good $50\%$ of the errors can be accounted for by octave error
 % Conclusion
 % --------------------------------------------------------------------------------------|
 \section{Conclusion}
-In this article the performance pitch estimation algorithm, pitchYinFFT, used by Freesound to estimate the pitch of the sounds that are uploaded is discussed. The calculation of Freesound at upload time in mimiced to be able to include non-Freesound sounds and to be able to investigate improvements to the usage of the algoritm. It is found that the current usage of the pitchYinFFT is not an optimal one for the estimation of the pitch of single-note sounds. Some measurements returned by the pitchYinFFT algorithm aswell as a collection of other descriptors are used to find predictors for the wrongly estimated sounds and to find possible improvements. From this the suggestion to use only the results of the pitch estimation of the frames which contain a loud enough portion of the signal of which the pitch is to be estimated is proposed and tested to decrease the overall error rate from $18.67\%$ to $13.11\%$. Besides this some other possible directions for further investigation are pointed out. 
+In this article the performance pitch estimation algorithm, pitchYinFFT, used by Freesound to estimate the pitch of the sounds that are uploaded is discussed. The calculation of Freesound at upload time is reproduced to be able to include non-Freesound sounds and to be able to investigate improvements to the usage of the algoritm. It is found that the current usage of the pitchYinFFT is not an optimal one for the estimation of the pitch of single-note sounds. Some measurements returned by the pitchYinFFT algorithm as well as a collection of other descriptors are used to find predictors for the wrongly estimated sounds and to find possible improvements. From this the suggestion to use only the results of the pitch estimation of the frames which contain a loud enough portion of the signal of which the pitch is to be estimated is proposed and tested to decrease the overall error rate from $18.67\%$ to $13.11\%$. Besides this some other possible directions for further investigation are pointed out. 
 % --------------------------------------------------------------------------------------|
 
 % --------------------------------------------------------------------------------------|
