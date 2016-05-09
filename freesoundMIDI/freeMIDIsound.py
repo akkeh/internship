@@ -5,8 +5,7 @@ import essentia.standard as esstd
 
 import util as ut
 import readMIDI_csv as rMIDI
-import similSounds as simSnd
-
+import collectSounds as colsnd
 ARGCOUNT = 2
 
 FS = 44100
@@ -42,7 +41,6 @@ else:
         print "Track %d:\t%s" % (i, os.path.basename(sys.argv[2+i]))
         sndFiles.append(sys.argv[2 + i])
         iNames.append(os.path.basename(sndFiles[-1]).split('.')[-2])
-        descs.append(simSnd.frsExtractor(sndFiles[-1]))
 
     # read events and gather sounds:
     sndTrk = [];
@@ -52,7 +50,7 @@ else:
         track = note[2]
         pitch = note[3]
         vel = note[4]
-        sndTrk.append([t0, dur, simSnd.chooseSound(iNames[track], descs[track], ut.midi2freq(pitch))])
+        sndTrk.append([t0, dur, colsnd.getSound(iNames[track], sndFiles[track], ut.midi2freq(pitch))])
 
     # create piece:
     max_ticks = sndTrk[-1][1]
@@ -64,14 +62,14 @@ else:
 
     n = 0
     for snd in sndTrk:
-        loader = esstd.MonoLoader(filename='./tmp/'+snd[2])
+        loader = esstd.MonoLoader(filename=snd[2])
         x = ut.trimSilence(loader())
         if NORMALISE == 1:
             x = ut.normalise(x)
         
         t0 = snd[0]; tN = snd[1]
         x = envelope(x, ticks_to_samples(t0, ppq, tempo, FS), ticks_to_samples(tN, ppq, tempo, FS))
-        music[ticks_to_samples(t0, ppq, tempo, FS):ticks_to_samples(tN, ppq, tempo, FS)] = x
+        music[ticks_to_samples(t0, ppq, tempo, FS):ticks_to_samples(tN, ppq, tempo, FS)] += x
        
 
 wr = esstd.MonoWriter(filename='./output.wav');
